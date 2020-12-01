@@ -46,7 +46,11 @@ def solve(input=DEFAULT_INPUT):
   return floor
 
 def basement(input=DEFAULT_INPUT):
-  pass
+  # Lol, inefficient
+  for i in range(len(input)):
+    if solve(input) < 0:
+      return i + 1
+  return -1
 
 if __name__ == '__main__':
   argv = sys.argv[1:]
