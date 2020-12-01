@@ -26,10 +26,16 @@ def test():
       continue
     results['failure'].append((case, expected, result))
 
-    return results
+  return results
 
 def solve(input=''):
-  pass
+  floor = 0
+  for char in input:
+    if char == '(':
+      floor += 1
+      continue
+    floor -= 1 # Yes, I know other characters could sneak in and break things.
+  return floor
 
 if __name__ == '__main__':
   argv = sys.argv[1:]
