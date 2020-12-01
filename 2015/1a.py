@@ -49,7 +49,7 @@ def basement(input=DEFAULT_INPUT):
   # Lol, inefficient
   for i in range(len(input)):
     if solve(input[:i]) < 0:
-      return i + 1
+      return i
   return -1
 
 if __name__ == '__main__':
