@@ -353,12 +353,17 @@ def solve(cases=TEST):
         forest.append(trees)
     print(forest)
 
+    return count(forest, 3, 1)
+
+def count(forest, over=3, down=1):
     column = 0
     encountered = 0
     for line in range(len(forest)):
+        if line % down:
+            continue
         if forest[line][column % len(forest[0])]:
             encountered += 1
-        column += 3
+        column += over
     return encountered
 
 if __name__ == '__main__':
