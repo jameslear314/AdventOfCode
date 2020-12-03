@@ -348,6 +348,14 @@ def solve(cases=TEST):
                 trees.append(1)
         forest.append(trees)
 
+    column = 0
+    encountered = 0
+    for line in range(len(forest)):
+        if forest[line][column % len(forest[0])]:
+            encountered += 1
+        column += 3
+    return encountered
+
 if __name__ == '__main__':
     test_results = solve()
     print(test_results)
