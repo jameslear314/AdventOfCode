@@ -349,11 +349,14 @@ def solve(cases=TEST):
                 continue
             else:
                 raise Exception("Not sure how we got here")
-        print(trees)
         forest.append(trees)
-    print(forest)
 
-    return count(forest, 3, 1)
+    scenarios = [(1,1), (3,1), (5,1), (7,1), (1,2)]
+    result = 1
+    for scenario in scenarios:
+        result *= count(forest, scenario[0], scenario[1])
+    return result
+
 
 def count(forest, over=3, down=1):
     column = 0
