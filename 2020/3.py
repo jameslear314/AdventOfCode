@@ -324,8 +324,7 @@ INPUT = '''
 ..#.##....#..#......###..#.....
 '''
 
-TEST = '''
-..##.......
+TEST = '''..##.......
 #...#...#..
 .#....#..#.
 ..#.#...#.#
@@ -339,14 +338,22 @@ TEST = '''
 
 def solve(cases=TEST):
     forest = []
+    cases = cases.split('\n'
+    )
     for line in cases:
         trees = []
         for char in line:
             if char == '.':
                 trees.append(0)
-            else:
+            elif char == '#':
                 trees.append(1)
+            elif char == '\n':
+                continue
+            else:
+                raise Exception("Not sure how we got here")
+        print(trees)
         forest.append(trees)
+    print(forest)
 
     column = 0
     encountered = 0
