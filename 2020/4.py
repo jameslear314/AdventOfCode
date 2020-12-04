@@ -1109,55 +1109,120 @@ def check_valid_c(case):
         return 0
     
     case = case.split(' ')
+    valid = 1
+    matches = 0
 
     for item in case:
         for field in FIELDS:
             if field in item:
                 item = item.split(':')
+                print(item)
+                initial_valid = valid
+
                 if 'byr' in field:
                     year = int(item[1])
                     if 1920 > year or year > 2002:
-                        return 0
+                        valid = 0
+                        print('fail 0')
+                        continue
+                    matches += 1
                 
                 if 'iyr' in field:
                     year = int(item[1])
                     if 2010 > year or year > 2020:
-                        return 0
+                        valid = 0
+                        print('fail 1')
+                        continue
+                    matches += 1
                         
                 if 'eyr' in field:
                     year = int(item[1])
                     if 2020 > year or year > 2030:
-                        return 0
+                        valid = 0
+                        print('fail 2')
+                        continue
+                    matches += 1
 
                 if 'hgt' in field:
                     value = item[1]
                     if 'cm' not in value or 'in' not in value:
-                        return 0
-                    value = int(value[:-2])
+                        valid = 0
+                        print('fail 3')
+                        continue
+                    height = int(value[:-2])
                     if 'cm' == value[:-2]:
-                        if value < 150 or value > 193:
-                            return 0
-                    if value < 59 or value > 76:
-                        return 0
+                        if height < 150 or height > 193:
+                            valid = 0
+                            print('fail 4')
+                            continue
+                    if height < 59 or height > 76:
+                        valid = 0
+                        print('fail 5')
+                        continue
+                    matches += 1
                     
                 if 'hcl' in field:
                     value = item[1]
                     if len(value) != 7 or '#' != value[0]:
-                        return 0
+                        valid = 0
+                        print('fail 6')
+                        continue
                     for char in value:
                         if char not in '$0123456789abcdef' :
-                            return 0
+                            valid = 0
+                            print('fail 7')
+                        continue
+                    matches += 1
 
                 if 'ecl' in field:
                     value = item[1]
                     if value not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']:
-                        return 0
-    return 1
+                        valid = 0
+                        print('fail 8')
+                        continue
+                    matches += 1
+    print('valid:', valid, 'matches', matches)
+    return valid
 
+
+
+INVALID = '''
+eyr:1972 cid:100
+hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926
+
+iyr:2019
+hcl:#602927 eyr:1967 hgt:170cm
+ecl:grn pid:012533040 byr:1946
+
+hcl:dab227 iyr:2012
+ecl:brn hgt:182cm pid:021572410 eyr:2020 byr:1992 cid:277
+
+hgt:59cm ecl:zzz
+eyr:2038 hcl:74454a iyr:2023
+pid:3556412378 byr:2007
+'''
+
+VALID = '''
+pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
+hcl:#623a2f
+
+eyr:2029 ecl:blu cid:129 byr:1989
+iyr:2014 pid:896056539 hcl:#a97842 hgt:165cm
+
+hcl:#888785
+hgt:164cm byr:2001 iyr:2015 cid:88
+pid:545766238 ecl:hzl
+eyr:2022
+
+iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
+'''
                 
 
 if __name__ == '__main__':
-    test_results = solve(INPUT)
+    invalid = solve(INVALID)
+    valid = solve(VALID)
+    test_results = solve(VALID)
     print(test_results)
     if test_results != TEST_RESULT:
+        print('total invalid', invalid, 'total valid', valid)
         exit()
