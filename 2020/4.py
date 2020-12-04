@@ -1038,15 +1038,15 @@ pid:274974402 hgt:183cm'''
 
 TEST_RESULT = 2
 
-FIELDS = [
-    'byr:',
-    'iyr:',
-    'eyr:',
-    'hgt:',
-    'hcl:',
-    'ecl:',
-    'pid:',
-]
+FIELDS = {
+    'byr:':0,
+    'iyr:':0,
+    'eyr:':0,
+    'hgt:':0,
+    'hcl:':0,
+    'ecl:':0,
+    'pid:':0,
+}
 
 def solve(cases=TESTS):
     data = ''
@@ -1055,16 +1055,49 @@ def solve(cases=TESTS):
         if cases[i] == '\n':
             valid += check_valid(data)
             data = ''
+            FIELDS = {
+                'byr:':0,
+                'iyr:':0,
+                'eyr:':0,
+                'hgt:':0,
+                'hcl:':0,
+                'ecl:':0,
+                'pid:':0,
+            }
             continue
         data += ' ' + cases[i]
     return valid
 
 def check_valid(case):
+    return check_valid_b(case)
+
+def check_valid_a(case):
     for field in FIELDS:
         if field not in case:
             print(field, 'not in ', case)
             return 0
     return 1
+
+def check_valid_b(case):
+    if len(case) < 4:
+        return 0
+    m4, m3, m2, m1 = case[:4]
+    for i in range(len(case)):
+        if i < 4:
+            continue
+        for field in FIELDS:
+            if m4 + m3 + m2 + m1 == field:
+                FIELDS[field] += 1
+    valid = True
+    for field in FIELDS:
+        valid &= FIELDS[field]
+    print(case)
+    print(valid)
+
+    if valid:
+        return 1
+    return 0
+
 
 
 if __name__ == '__main__':
