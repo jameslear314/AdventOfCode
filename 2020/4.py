@@ -1102,7 +1102,7 @@ def check_valid_b(case):
         return 1
     return 0
 
-
+FAILURES = []
 
 def check_valid_c(case):
     if not check_valid_a(case):
@@ -1115,76 +1115,84 @@ def check_valid_c(case):
     for item in case:
         for field in FIELDS:
             if field in item:
-                item = item.split(':')
-                print(item)
-                initial_valid = valid
-
-                if 'byr' in field:
-                    year = int(item[1])
-                    if 1920 > year or year > 2002:
-                        valid = 0
-                        print('fail 0')
-                        continue
-                    matches += 1
-                
-                if 'iyr' in field:
-                    year = int(item[1])
-                    if 2010 > year or year > 2020:
-                        valid = 0
-                        print('fail 1')
-                        continue
-                    matches += 1
-                        
-                if 'eyr' in field:
-                    year = int(item[1])
-                    if 2020 > year or year > 2030:
-                        valid = 0
-                        print('fail 2')
-                        continue
-                    matches += 1
-
-                if 'hgt' in field:
-                    value = item[1]
-                    if 'cm' not in value or 'in' not in value:
-                        valid = 0
-                        print('fail 3')
-                        continue
-                    height = int(value[:-2])
-                    if 'cm' == value[:-2]:
-                        if height < 150 or height > 193:
-                            valid = 0
-                            print('fail 4')
-                            continue
-                    if height < 59 or height > 76:
-                        valid = 0
-                        print('fail 5')
-                        continue
-                    matches += 1
-                    
-                if 'hcl' in field:
-                    value = item[1]
-                    if len(value) != 7 or '#' != value[0]:
-                        valid = 0
-                        print('fail 6')
-                        continue
-                    for char in value:
-                        if char not in '$0123456789abcdef' :
-                            valid = 0
-                            print('fail 7')
-                        continue
-                    matches += 1
-
-                if 'ecl' in field:
-                    value = item[1]
-                    if value not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']:
-                        valid = 0
-                        print('fail 8')
-                        continue
-                    matches += 1
+                valid *= validate(field, item)
+                            
     print('valid:', valid, 'matches', matches)
     return valid
 
 
+def validate(field, item):
+    item = item.split(':')
+    print(item)
+
+    if 'byr' in field:
+        return byr(item)
+    if 'iyr' in field:
+        return iyr(item)    
+    if 'eyr' in field:
+        return eyr(item)
+    if 'hgt' in field:
+        return hgt(item)
+    if 'hcl' in field:
+        return hcl(item)
+    if 'ecl' in field:
+        return ecl(item)
+    if 'pid' in field:
+        return pid(item)
+    return 1
+
+def byr(item):
+    year = int(item[1])
+    if 1920 > year or year > 2002:
+        return 0
+    return 1
+def iyr(item):
+    year = int(item[1])
+    if 2010 > year or year > 2020:
+        return 0
+    return 1
+def eyr(item):
+    year = int(item[1])
+    if 2020 > year or year > 2030:
+        return 0
+    return 1
+def hgt(item):
+    value = item[1]
+    if 'cm' not in value and 'in' not in value:
+        return 0
+        
+    height = int(value[:-2])
+    if 'cm' == value[:-2]:
+        if height < 150 or height > 193:
+            return 0
+            
+    if 'in' == value[:-2]:
+        if height < 59 or height > 76:
+            return 0
+    return 1
+def hcl(item):
+    value = item[1]
+    if len(value) != 7 or '#' != value[0]:
+        return 0
+        
+    for char in value:
+        if char not in '#0123456789abcdef' :
+            return 0
+    return 1
+def ecl(item):
+    value = item[1]
+    if value not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']:
+        return 0
+    return 1
+def pid(item):
+    value = item[1]
+    if len(value) != 9:
+        return 0
+        
+    for char in value:
+        if char not in '0123456789':
+            return 0
+    return 1
 
 INVALID = '''
 eyr:1972 cid:100
@@ -1216,13 +1224,36 @@ eyr:2022
 
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
 '''
-                
+
+suite = [
+    (byr, 2002, 2003),
+    (hgt, '60in', '190in'),
+    (hgt, '190cm', '190'),
+    (hcl, '#123abc', '#123abz'),
+    (ecl, 'brn', 'wat'),
+    (pid, '000000001', '0123456789')
+]
+
 
 if __name__ == '__main__':
     invalid = solve(INVALID)
+    if invalid != 0:
+        print('need 0 invalid')
+        exit()
     valid = solve(VALID)
-    test_results = solve(VALID)
-    print(test_results)
+    if valid != 4:
+        print('need 4 valid')
+        exit()
+    for item in suite:
+        valid = ('none', item[1])
+        invalid = ('none', item[2])
+        if not item[0](valid) or item[0](invalid):
+            print('missed this suite', item)
+            exit()
+    test_results = solve(INPUT)
+    for line in FAILURES:
+        print(line)
+    print('results', test_results)
     if test_results != TEST_RESULT:
         print('total invalid', invalid, 'total valid', valid)
         exit()
