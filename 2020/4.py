@@ -1034,7 +1034,8 @@ iyr:2002 byr:2025 hcl:327f93 pid:831648100
 byr:1967 ecl:oth
 eyr:2021
 hcl:#602927 iyr:2014
-pid:274974402 hgt:183cm'''
+pid:274974402 hgt:183cm
+'''
 
 TEST_RESULT = 2
 
@@ -1051,6 +1052,7 @@ FIELDS = {
 def solve(cases=TESTS):
     data = ''
     valid = 0
+    passport_count = 0
     cases = cases.split('\n')
     for i in range(len(cases)):
         if len(cases[i]) == 0:
@@ -1065,12 +1067,14 @@ def solve(cases=TESTS):
                 'ecl:':0,
                 'pid:':0,
             }
+            passport_count += 1
             continue
         data += ' ' + cases[i]
+    print(passport_count)
     return valid
 
 def check_valid(case):
-    return check_valid_a(case)
+    return check_valid_c(case)
 
 def check_valid_a(case):
     for field in FIELDS:
@@ -1094,15 +1098,66 @@ def check_valid_b(case):
         valid &= FIELDS[field]
     print(case)
     print(valid)
-
     if valid:
         return 1
     return 0
 
 
 
+def check_valid_c(case):
+    if not check_valid_a(case):
+        return 0
+    
+    case = case.split(' ')
+
+    for item in case:
+        for field in FIELDS:
+            if field in item:
+                item = item.split(':')
+                if 'byr' in field:
+                    year = int(item[1])
+                    if 1920 > year or year > 2002:
+                        return 0
+                
+                if 'iyr' in field:
+                    year = int(item[1])
+                    if 2010 > year or year > 2020:
+                        return 0
+                        
+                if 'eyr' in field:
+                    year = int(item[1])
+                    if 2020 > year or year > 2030:
+                        return 0
+
+                if 'hgt' in field:
+                    value = item[1]
+                    if 'cm' not in value or 'in' not in value:
+                        return 0
+                    value = int(value[:-2])
+                    if 'cm' == value[:-2]:
+                        if value < 150 or value > 193:
+                            return 0
+                    if value < 59 or value > 76:
+                        return 0
+                    
+                if 'hcl' in field:
+                    value = item[1]
+                    if len(value) != 7 or '#' != value[0]:
+                        return 0
+                    for char in value:
+                        if char not in '$0123456789abcdef' :
+                            return 0
+
+                if 'ecl' in field:
+                    value = item[1]
+                    if value not in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']:
+                        return 0
+    return 1
+
+                
+
 if __name__ == '__main__':
-    test_results = solve(TESTS)
+    test_results = solve(INPUT)
     print(test_results)
     if test_results != TEST_RESULT:
         exit()
