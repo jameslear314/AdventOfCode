@@ -1051,8 +1051,9 @@ FIELDS = {
 def solve(cases=TESTS):
     data = ''
     valid = 0
+    cases = cases.split('\n')
     for i in range(len(cases)):
-        if cases[i] == '\n':
+        if len(cases[i]) == 0:
             valid += check_valid(data)
             data = ''
             FIELDS = {
@@ -1069,7 +1070,7 @@ def solve(cases=TESTS):
     return valid
 
 def check_valid(case):
-    return check_valid_b(case)
+    return check_valid_a(case)
 
 def check_valid_a(case):
     for field in FIELDS:
