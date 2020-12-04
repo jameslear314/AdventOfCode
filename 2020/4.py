@@ -1038,11 +1038,37 @@ pid:274974402 hgt:183cm'''
 
 TEST_RESULT = 2
 
+FIELDS = [
+    'byr:',
+    'iyr:',
+    'eyr:',
+    'hgt:',
+    'hcl:',
+    'ecl:',
+    'pid:',
+]
+
 def solve(cases=TESTS):
-    pass
+    data = ''
+    valid = 0
+    for i in range(len(cases)):
+        if cases[i] == '\n':
+            valid += check_valid(data)
+            data = ''
+            continue
+        data += ' ' + cases[i]
+    return valid
+
+def check_valid(case):
+    for field in FIELDS:
+        if field not in case:
+            print(field, 'not in ', case)
+            return 0
+    return 1
+
 
 if __name__ == '__main__':
-    test_results = solve(INPUT)
+    test_results = solve(TESTS)
     print(test_results)
     if test_results != TEST_RESULT:
         exit()
