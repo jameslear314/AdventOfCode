@@ -1116,15 +1116,14 @@ def check_valid_c(case):
         for field in FIELDS:
             if field in item:
                 valid *= validate(field, item)
+                print(valid, field, item)
+                matches += 0
                             
-    print('valid:', valid, 'matches', matches)
     return valid
 
 
 def validate(field, item):
     item = item.split(':')
-    print(item)
-
     if 'byr' in field:
         return byr(item)
     if 'iyr' in field:
@@ -1162,11 +1161,11 @@ def hgt(item):
         return 0
         
     height = int(value[:-2])
-    if 'cm' == value[:-2]:
+    if 'cm' == value[-2:]:
         if height < 150 or height > 193:
             return 0
             
-    if 'in' == value[:-2]:
+    if 'in' == value[-2:]:
         if height < 59 or height > 76:
             return 0
     return 1
@@ -1226,12 +1225,12 @@ iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
 '''
 
 suite = [
-    (byr, 2002, 2003),
-    (hgt, '60in', '190in'),
-    (hgt, '190cm', '190'),
-    (hcl, '#123abc', '#123abz'),
-    (ecl, 'brn', 'wat'),
-    (pid, '000000001', '0123456789')
+    ('byr', '2002', '2003'),
+    ('hgt', '60in', '190in'),
+    ('hgt', '190cm', '190'),
+    ('hcl', '#123abc', '#123abz'),
+    ('ecl', 'brn', 'wat'),
+    ('pid', '000000001', '0123456789')
 ]
 
 
@@ -1245,10 +1244,12 @@ if __name__ == '__main__':
         print('need 4 valid')
         exit()
     for item in suite:
-        valid = ('none', item[1])
-        invalid = ('none', item[2])
-        if not item[0](valid) or item[0](invalid):
-            print('missed this suite', item)
+        valid = item[1]
+        invalid = item[2]
+        validated = validate(item[0], ':'+valid)
+        invalidated = validate(item[0], ':'+invalid)
+        if not validated or invalidated:
+            print('test suite', item, validated, invalidated)
             exit()
     test_results = solve(INPUT)
     for line in FAILURES:
