@@ -783,7 +783,8 @@ def seat(case):
     columns = case[7:]
     row = calc_rows(rows)
     column = calc_columns(columns)
-    seat_id = 44 * row + columns
+    print(case, row, column)
+    seat_id = 44 * row[0] + column[0]
     return (row, column, seat_id)
 
 def calc_rows(rows):
@@ -798,7 +799,16 @@ def calc_rows(rows):
     return min, max
 
 def calc_columns(columns):
-    pass
+    print(columns)
+    min = 0
+    max = 7
+    for char in columns:
+        if char == 'L':
+            max = min + math.floor((max - min) / 2)
+        if char == 'R':
+            min = min + math.ceil((max - min) / 2)
+    return min, max
+
 
 if __name__ == '__main__':
     t = calc_rows('F')
@@ -808,6 +818,15 @@ if __name__ == '__main__':
     t = calc_rows('FB')
     if t != (32, 63):
         print('B failed', t)
+        exit()
+
+    t = calc_columns('R')
+    if t != (4, 7):
+        print('R failed', t)
+        exit()
+    t = calc_columns('L')
+    if t != (0, 3):
+        print('L failed', t)
         exit()
 
     for test in TESTS:
