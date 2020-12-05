@@ -776,7 +776,7 @@ def solve(cases):
         if sit[2] > highest:
             highest = sit[2]
             result = sit
-    return highest, result
+    return result
 
 def seat(case):
     rows = case[:7]
@@ -784,8 +784,8 @@ def seat(case):
     row = calc_rows(rows)
     column = calc_columns(columns)
     print(case, row, column)
-    seat_id = 44 * row[0] + column[0]
-    return (row, column, seat_id)
+    seat_id = 8 * row[0] + column[0]
+    return (row[0], column[0], seat_id)
 
 def calc_rows(rows):
     print(rows)
