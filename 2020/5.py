@@ -767,6 +767,8 @@ FBBBFFFRLL
 FBBFBFBRRL
 FBFFFFFRRL'''
 
+SEATS = []
+
 def solve(cases):
     highest = 0
     result = None
@@ -784,7 +786,10 @@ def seat(case):
     row = calc_rows(rows)
     column = calc_columns(columns)
     seat_id = 8 * row[0] + column[0]
-    return (row[0], column[0], seat_id)
+    result = (row[0], column[0], seat_id)
+    print(result)
+    SEATS.append(result)
+    return result
 
 def calc_rows(rows):
     min = 0
@@ -836,16 +841,16 @@ if __name__ == '__main__':
     print('results', test_results)
 
 
-    cases = INPUT.split('\n')
-    seats = []
-    for case in INPUT:
-        sit = seat(case)
-        seats.append(sit)
-    seats = set(seats)
-    seats = list(seats)
-    seats.sort()
-    for i in range(len(seats)):
+    
+    # seats = []
+    # for case in INPUT:
+    #     sit = seat(case)
+    #     seats.append(sit)
+    # seats = set(seats)
+    # seats = list(seats)
+    SEATS.sort()
+    for i in range(len(SEATS)):
         if i == 0:
             continue
-        if seats[i][2] - seats[i-1][2] != 1:
-            print(seats[i-1], seats[i])
+        if SEATS[i][2] - SEATS[i-1][2] != 1:
+            print(SEATS[i-1], SEATS[i])
