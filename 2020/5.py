@@ -783,12 +783,10 @@ def seat(case):
     columns = case[7:]
     row = calc_rows(rows)
     column = calc_columns(columns)
-    print(case, row, column)
     seat_id = 8 * row[0] + column[0]
     return (row[0], column[0], seat_id)
 
 def calc_rows(rows):
-    print(rows)
     min = 0
     max = 127
     for char in rows:
@@ -799,7 +797,6 @@ def calc_rows(rows):
     return min, max
 
 def calc_columns(columns):
-    print(columns)
     min = 0
     max = 7
     for char in columns:
@@ -837,5 +834,18 @@ if __name__ == '__main__':
 
     test_results = solve(INPUT)
     print('results', test_results)
-    if test_results != TEST_RESULT:
-        exit()
+
+
+    cases = INPUT.split('\n')
+    seats = []
+    for case in INPUT:
+        sit = seat(case)
+        seats.append(sit)
+    seats = set(seats)
+    seats = list(seats)
+    seats.sort()
+    for i in range(len(seats)):
+        if i == 0:
+            continue
+        if seats[i][2] - seats[i-1][2] != 1:
+            print(seats[i-1], seats[i])
