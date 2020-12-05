@@ -1,3 +1,4 @@
+import math
 TESTS = {
     'BFFFBBFRRR': (70, 7, 567),
     'FFFBBBFRRR': (14, 7, 119),
@@ -767,11 +768,48 @@ FBBFBFBRRL
 FBFFFFFRRL'''
 
 def solve(cases):
-    result = ''
-    return result
+    highest = 0
+    result = None
+    cases = cases.split('\n')
+    for case in cases:
+        sit = seat(case)
+        if sit[2] > highest:
+            highest = sit[2]
+            result = sit
+    return highest, result
 
+def seat(case):
+    rows = case[:7]
+    columns = case[7:]
+    row = calc_rows(rows)
+    column = calc_columns(columns)
+    seat_id = 44 * row + columns
+    return (row, column, seat_id)
+
+def calc_rows(rows):
+    print(rows)
+    min = 0
+    max = 127
+    for char in rows:
+        if char == 'F':
+            max = min + math.floor((max - min) / 2)
+        elif char == 'B':
+            min = min + math.ceil((max - min) / 2)
+    return min, max
+
+def calc_columns(columns):
+    pass
 
 if __name__ == '__main__':
+    t = calc_rows('F')
+    if t != (0, 63):
+        print('F failed', t)
+        exit()
+    t = calc_rows('FB')
+    if t != (32, 63):
+        print('B failed', t)
+        exit()
+
     for test in TESTS:
         test_result = solve(test)
         if test_result != TESTS[test]:
