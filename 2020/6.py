@@ -2215,6 +2215,28 @@ def solve(cases):
     return result
     
 
+def solve2(cases):
+    cases = cases.split('\n')
+    answers = {}
+    count = 0
+
+    results = 0
+    for line in cases:
+        if line == '':
+            for answer in answers:
+                if answers[answer] == count:
+                    results += 1
+            answers = {}
+            count = 0
+            continue
+        for char in line:
+            if char not in answers:
+                answers[char] = 1
+            else:
+                answers[char] += 1
+        count += 1
+    return results
+
 
 if __name__ == '__main__':
     test_results = solve(TEST)
@@ -2222,3 +2244,9 @@ if __name__ == '__main__':
         print(test_results, 'should be 11')
         exit()
     print('results', test_results)
+
+    results = solve(INPUT)
+    print(results)
+
+
+    print(solve2(INPUT))
