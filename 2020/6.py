@@ -2196,7 +2196,7 @@ zgp
 pnjtz
 '''
 
-def solve(cases
+def solve(cases):
     result = None
     return result
 
