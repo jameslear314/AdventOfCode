@@ -13,7 +13,8 @@ a
 a
 a
 
-b'''
+b
+'''
 
 INPUT = '''gwlcpbtxmiezd
 xwlcpbtzimgdk
@@ -2197,8 +2198,22 @@ pnjtz
 '''
 
 def solve(cases):
-    result = None
+    cases = cases.split('\n')
+    groups = []
+    answers = set()
+    for line in cases:
+        if line == '':
+            groups.append(len(answers))
+            answers = set()
+            continue
+        for char in line:
+            answers.add(char)
+    
+    result = 0
+    for group in groups:
+        result += group
     return result
+    
 
 
 if __name__ == '__main__':
