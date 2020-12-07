@@ -606,6 +606,43 @@ dotted black bag contain 0 other bag
 '''
 
 def solve(cases):
+    map = make_map(cases)
+    
+    count = 0
+    for key in map:
+        to_find = []
+        found = 0
+        for item in map[key]:
+            new_key = item[0]
+            to_find.append(new_key)
+        print('initial', to_find)
+        searched = set()
+        while len(to_find) > 0:
+            new_key = to_find[0]
+            to_find = to_find[1:]
+            if new_key == 'shiny gold':
+                print('found under', key)
+                found = 1
+                break
+            if new_key not in map:
+                print('could not find', new_key)
+                continue
+            for item in map[new_key]:
+                new_key = item[0]
+                if new_key == 'shiny gold':
+                    print('found under', key)
+                    found = 1
+                    break
+                if new_key in searched:
+                    continue
+                searched.add(item[0])
+                to_find.append(item[0])
+            if found:
+                break
+        count += found
+    return count
+
+def make_map(cases):
     cases = cases.split('\n')
 
     map = {}
@@ -613,7 +650,7 @@ def solve(cases):
     for i in range(len(cases)):
         if not cases[i] or type(cases[i]) == type([]):
             continue
-        
+
         case = cases[i].split(',')
         new_case = []
         for j in range(len(case)):
@@ -633,8 +670,8 @@ def solve(cases):
                 count = int(words[0])
                 color.strip()
                 result.append((color, count))
-        cases[i] = result
-    print(cases)
+        map[result[0]] = result[1:]
+    return map
 
 if __name__ == '__main__':
     test_results = solve(TEST)
