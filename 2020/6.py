@@ -1,3 +1,4 @@
+import math
 INPUT = '''shiny plum bag contain 0 other bag
 clear crimson bag contain 3 pale aqua bag, 4 plaid magenta bag, 3 dotted beige bag, 3 dotted black bag
 dim violet bag contain 5 bright brown bag
@@ -615,22 +616,22 @@ def solve(cases):
         for item in map[key]:
             new_key = item[0]
             to_find.append(new_key)
-        print('initial', to_find)
+        # print('initial', to_find)
         searched = set()
         while len(to_find) > 0:
             new_key = to_find[0]
             to_find = to_find[1:]
             if new_key == 'shiny gold':
-                print('found under', key)
+                # print('found under', key)
                 found = 1
                 break
             if new_key not in map:
-                print('could not find', new_key)
+                # print('could not find', new_key)
                 continue
             for item in map[new_key]:
                 new_key = item[0]
                 if new_key == 'shiny gold':
-                    print('found under', key)
+                    # print('found under', key)
                     found = 1
                     break
                 if new_key in searched:
@@ -673,6 +674,18 @@ def make_map(cases):
         map[result[0]] = result[1:]
     return map
 
+
+def contained_by(map, color):
+    inside = map[color]
+    included = 1
+    for bag in inside:
+        if bag[0] == 'other':
+            continue
+        print(bag)
+        included += bag[1] * max(1 ,contained_by(map, bag[0]))
+    print(included)
+    return included
+
 if __name__ == '__main__':
     test_results = solve(TEST)
     if test_results != 4:
@@ -684,4 +697,10 @@ if __name__ == '__main__':
     print(results)
 
 
-    print(solve2(INPUT))
+    map = make_map(INPUT)
+    included = 0
+    inside = map['shiny gold']
+    print(inside)
+    for bag in inside:
+        included += bag[1] * contained_by(map, bag[0])
+    print(included)
