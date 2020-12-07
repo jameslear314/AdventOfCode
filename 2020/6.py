@@ -606,6 +606,7 @@ dotted black bag contain no other bag.
 '''
 
 def solve(cases):
+    cases = cases.split('\n')
     pass
 
 if __name__ == '__main__':
