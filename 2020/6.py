@@ -1,4 +1,4 @@
-INPUT = '''shiny plum bag contain no other bag
+INPUT = '''shiny plum bag contain 0 other bag
 clear crimson bag contain 3 pale aqua bag, 4 plaid magenta bag, 3 dotted beige bag, 3 dotted black bag
 dim violet bag contain 5 bright brown bag
 mirrored tomato bag contain 3 faded maroon bag, 3 dark green bag
@@ -55,7 +55,7 @@ light crimson bag contain 5 dark white bag, 2 shiny lavender bag, 1 muted white 
 dark violet bag contain 3 muted violet bag, 1 bright green bag, 2 dotted maroon bag
 striped white bag contain 1 light coral bag, 2 light brown bag
 dotted beige bag contain 5 light coral bag, 3 plaid black bag, 1 bright lavender bag, 5 posh green bag
-plaid plum bag contain no other bag
+plaid plum bag contain 0 other bag
 striped red bag contain 3 plaid green bag
 light white bag contain 5 plaid teal bag, 5 faded tan bag
 clear purple bag contain 1 drab cyan bag, 2 shiny fuchsia bag, 4 dull beige bag
@@ -106,7 +106,7 @@ faded indigo bag contain 4 shiny brown bag, 5 dotted salmon bag, 3 vibrant aqua 
 dotted tomato bag contain 1 vibrant plum bag
 bright violet bag contain 4 dim yellow bag, 3 dark silver bag, 5 posh beige bag, 5 wavy lavender bag
 shiny chartreuse bag contain 3 bright brown bag, 2 dim cyan bag, 4 shiny brown bag, 1 clear black bag
-dim chartreuse bag contain no other bag
+dim chartreuse bag contain 0 other bag
 bright turquoise bag contain 3 clear lime bag, 3 clear violet bag, 2 dotted maroon bag, 1 dark cyan bag
 plaid salmon bag contain 3 dark tomato bag, 5 light maroon bag
 drab tan bag contain 2 light tomato bag, 4 clear maroon bag, 1 dim olive bag, 5 dark teal bag
@@ -133,7 +133,7 @@ striped coral bag contain 3 striped turquoise bag, 1 posh green bag, 1 dark brow
 dim black bag contain 2 posh coral bag
 mirrored orange bag contain 3 dull maroon bag, 5 bright purple bag, 2 striped turquoise bag
 clear cyan bag contain 5 wavy green bag, 4 faded coral bag, 4 muted purple bag
-muted aqua bag contain no other bag
+muted aqua bag contain 0 other bag
 drab maroon bag contain 1 vibrant orange bag, 5 dotted white bag
 dim brown bag contain 1 dark plum bag, 5 light aqua bag, 5 striped orange bag, 3 vibrant aqua bag
 dim teal bag contain 3 pale gold bag, 4 dark teal bag
@@ -277,7 +277,7 @@ dotted lime bag contain 4 dull tomato bag, 5 dull yellow bag, 4 shiny gold bag
 posh fuchsia bag contain 2 pale orange bag, 4 posh coral bag, 1 drab brown bag
 light teal bag contain 3 faded green bag
 shiny lime bag contain 4 dotted blue bag, 5 light coral bag
-dull blue bag contain no other bag
+dull blue bag contain 0 other bag
 pale turquoise bag contain 2 pale blue bag, 5 dotted purple bag
 striped gold bag contain 2 wavy silver bag, 3 light purple bag, 3 dull gold bag, 1 dark coral bag
 vibrant chartreuse bag contain 5 mirrored tan bag, 4 vibrant blue bag, 1 clear teal bag, 2 dull indigo bag
@@ -341,7 +341,7 @@ shiny magenta bag contain 5 plaid blue bag, 5 shiny aqua bag, 1 dull aqua bag
 light plum bag contain 1 dim black bag, 3 faded olive bag
 shiny beige bag contain 5 vibrant plum bag, 5 light blue bag, 2 light salmon bag, 3 wavy tan bag
 wavy gold bag contain 1 drab aqua bag
-vibrant lime bag contain no other bag
+vibrant lime bag contain 0 other bag
 vibrant turquoise bag contain 1 vibrant blue bag, 4 striped teal bag, 5 striped white bag
 dim maroon bag contain 4 striped lime bag, 2 light orange bag, 2 vibrant maroon bag
 posh olive bag contain 5 plaid tomato bag, 4 dark magenta bag, 4 faded chartreuse bag
@@ -377,7 +377,7 @@ clear plum bag contain 1 dark silver bag, 4 dull green bag, 3 shiny gray bag
 muted lavender bag contain 5 dim olive bag, 1 pale lime bag
 faded gold bag contain 1 striped coral bag, 3 light aqua bag
 faded orange bag contain 4 faded beige bag
-dim fuchsia bag contain no other bag
+dim fuchsia bag contain 0 other bag
 dull green bag contain 5 dull purple bag, 3 bright maroon bag, 1 dark plum bag
 muted turquoise bag contain 5 shiny chartreuse bag, 1 mirrored lime bag
 striped cyan bag contain 3 striped gray bag, 4 dark brown bag
@@ -403,7 +403,7 @@ dull chartreuse bag contain 1 plaid plum bag
 bright red bag contain 2 light lavender bag, 1 drab magenta bag
 drab crimson bag contain 2 pale chartreuse bag, 1 muted black bag, 4 striped yellow bag, 4 striped black bag
 wavy aqua bag contain 4 light tan bag, 3 dim maroon bag, 1 bright fuchsia bag
-clear gold bag contain no other bag
+clear gold bag contain 0 other bag
 dim lime bag contain 1 dull crimson bag, 1 mirrored orange bag, 1 light yellow bag, 1 muted fuchsia bag
 pale cyan bag contain 5 dull blue bag, 5 dark blue bag
 dim silver bag contain 3 bright aqua bag
@@ -465,7 +465,7 @@ posh indigo bag contain 1 shiny salmon bag
 clear coral bag contain 2 muted violet bag
 pale silver bag contain 2 drab olive bag, 5 wavy red bag
 light beige bag contain 2 muted lime bag
-striped orange bag contain no other bag
+striped orange bag contain 0 other bag
 dark gray bag contain 4 pale white bag, 3 pale blue bag, 5 dotted beige bag
 striped lavender bag contain 2 dull brown bag, 4 vibrant lavender bag, 1 vibrant aqua bag, 5 dull gold bag
 dark blue bag contain 5 clear gold bag, 5 faded silver bag
@@ -584,7 +584,7 @@ drab fuchsia bag contain 2 faded beige bag, 3 light lavender bag
 dull white bag contain 5 wavy purple bag, 4 shiny lavender bag
 dim plum bag contain 4 dark brown bag, 3 shiny brown bag, 4 dim brown bag, 5 light maroon bag
 muted red bag contain 3 bright chartreuse bag, 2 shiny lime bag, 1 dotted olive bag, 3 shiny plum bag
-posh silver bag contain no other bag
+posh silver bag contain 0 other bag
 drab coral bag contain 4 faded white bag, 5 mirrored plum bag, 5 striped blue bag
 mirrored aqua bag contain 1 dark tomato bag, 2 dark brown bag
 vibrant indigo bag contain 5 dark silver bag, 3 clear lime bag, 1 dim gray bag
@@ -601,8 +601,8 @@ muted yellow bag contain 2 shiny gold bag, 9 faded blue bag
 shiny gold bag contain 1 dark olive bag, 2 vibrant plum bag
 dark olive bag contain 3 faded blue bag, 4 dotted black bag
 vibrant plum bag contain 5 faded blue bag, 6 dotted black bag
-faded blue bag contain no other bag
-dotted black bag contain no other bag
+faded blue bag contain 0 other bag
+dotted black bag contain 0 other bag
 '''
 
 def solve(cases):
@@ -610,7 +610,31 @@ def solve(cases):
 
     map = {}
 
-    pass
+    for i in range(len(cases)):
+        if not cases[i] or type(cases[i]) == type([]):
+            continue
+        
+        case = cases[i].split(',')
+        new_case = []
+        for j in range(len(case)):
+            new_case += case[j].split('contain')
+        case = []
+        for k in range(len(new_case)):
+            case.append(new_case[k].split(' bag')[0])
+
+        result = []
+        for l in range(len(case)):
+            if l == 0:
+                result.append(case[l])
+            else:
+                case[l] = case[l].strip()
+                words = case[l].split(' ')
+                color = ' '.join(words[1:])
+                count = int(words[0])
+                color.strip()
+                result.append((color, count))
+        cases[i] = result
+    print(cases)
 
 if __name__ == '__main__':
     test_results = solve(TEST)
