@@ -643,7 +643,36 @@ acc +6
 '''
 
 def solve(cases):
-    return
+    cases = cases.split('\n')
+
+    i = 0
+    visited = set()
+    acc = 0
+    while i not in visited:
+        visited.add(i)
+        case = cases[i]
+        case = case.split(' ')
+        command = case[0]
+        print(i, case)
+        if command == 'nop':
+            pass
+        elif command == 'acc':
+            sign = case[1][0]
+            num = int(case[1][1:])
+            if sign == '+':
+                acc += num
+            else:
+                acc -= num
+        else:
+            sign = case[1][0]
+            num = int(case[1][1:])
+            if sign == '+':
+                i += num
+            else:
+                i -= num
+            continue
+        i += 1
+    return acc
 
 if __name__ == '__main__':
     test_results = solve(TEST)
