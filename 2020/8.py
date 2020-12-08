@@ -628,8 +628,7 @@ acc -17
 acc -7
 acc +0
 acc +21
-jmp +1
-'''
+jmp +1'''
 
 TEST = '''nop +0
 acc +1
@@ -639,8 +638,7 @@ jmp -3
 acc -99
 acc +1
 jmp -4
-acc +6
-'''
+acc +6'''
 
 def solve(cases):
     cases = cases.split('\n')
@@ -649,29 +647,31 @@ def solve(cases):
     visited = set()
     acc = 0
     while i not in visited:
-        visited.add(i)
-        case = cases[i]
-        case = case.split(' ')
-        command = case[0]
-        print(i, case)
-        if command == 'nop':
-            pass
-        elif command == 'acc':
-            sign = case[1][0]
-            num = int(case[1][1:])
-            if sign == '+':
-                acc += num
+            if i >= len(cases):
+                return acc
+            visited.add(i)
+            case = cases[i]
+            case = case.split(' ')
+            command = case[0]
+            print(i, case)
+            if command == 'nop':
+                pass
+            elif command == 'acc':
+                sign = case[1][0]
+                num = int(case[1][1:])
+                if sign == '+':
+                    acc += num
+                else:
+                    acc -= num
             else:
-                acc -= num
-        else:
-            sign = case[1][0]
-            num = int(case[1][1:])
-            if sign == '+':
-                i += num
-            else:
-                i -= num
-            continue
-        i += 1
+                sign = case[1][0]
+                num = int(case[1][1:])
+                if sign == '+':
+                    i += num
+                else:
+                    i -= num
+                continue
+            i += 1
     if i in visited:
         return None
     return acc
@@ -681,33 +681,42 @@ def solve2(cases):
     new_cases = cases[:]
     solved = False
     i = -1
-    while not solved:
+    while True:
         i += 1
+        if i == len(cases) or len(cases[i]) == 0:
+            return None
         new_cases = cases[:]
 
-        for i in range(len(new_cases)):
-            line = new_cases[i].split(' ')
-            if line[0] == 'nop':
-                line[0] = 'jmp'
-            elif line[0] == 'jmp':
-                line[0] = 'nop'
-            new_cases[i] = ' '.join(line)
-        try:
-            result = solve(cases)
-            if result:
-                return result
-        except Exception:
-            pass
+        line = new_cases[i].split(' ')
+        if line[0] == 'nop':
+            line[0] = 'jmp'
+        elif line[0] == 'jmp':
+            line[0] = 'nop'
+
+        new_cases[i] = ' '.join(line)
+        print(i, line, len(new_cases))
+        result = solve('\n'.join(new_cases))
+        print(i, result)
+        if result is not None and result != 0:
+            return result
+    return result
 
 if __name__ == '__main__':
+    # test_results = solve(TEST)
+    # if test_results != 5:
+    #     print(test_results, 'should be 5')
+    #     exit()
+    # print('results', test_results)
+
+    # results = solve(INPUT)
+    # if results != 2034:
+    #     print(results, 'should be 2034')
+    #     exit()
+
     test_results = solve2(TEST)
     if test_results != 8:
-        print(test_results, 'should be 5')
+        print(test_results, 'should be 8')
         exit()
-    print('results', test_results)
-
-    results = solve(INPUT)
-    print(results)
 
     results = solve2(INPUT)
     print(results)
