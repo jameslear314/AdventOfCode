@@ -672,14 +672,42 @@ def solve(cases):
                 i -= num
             continue
         i += 1
+    if i in visited:
+        return None
     return acc
 
+def solve2(cases):
+    cases = cases.split('\n')
+    new_cases = cases[:]
+    solved = False
+    i = -1
+    while not solved:
+        i += 1
+        new_cases = cases[:]
+
+        for i in range(len(new_cases)):
+            line = new_cases[i].split(' ')
+            if line[0] == 'nop':
+                line[0] = 'jmp'
+            elif line[0] == 'jmp':
+                line[0] = 'nop'
+            new_cases[i] = ' '.join(line)
+        try:
+            result = solve(cases)
+            if result:
+                return result
+        except Exception:
+            pass
+
 if __name__ == '__main__':
-    test_results = solve(TEST)
-    if test_results != 5:
+    test_results = solve2(TEST)
+    if test_results != 8:
         print(test_results, 'should be 5')
         exit()
     print('results', test_results)
 
     results = solve(INPUT)
+    print(results)
+
+    results = solve2(INPUT)
     print(results)
