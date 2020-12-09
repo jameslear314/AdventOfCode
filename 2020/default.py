@@ -1053,8 +1053,9 @@ def solve2(cases, answer):
             n += 1
             num += cases[n]
         if num == answer:
-            print(i, cases[i], n, cases[n], num)
-            return cases[i] + cases[n]
+            numbers = cases[i:n]
+            
+            return min(numbers) + max(numbers)
 
     return None
 
