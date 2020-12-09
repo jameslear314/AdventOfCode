@@ -1043,8 +1043,20 @@ def solve(cases, num):
          n += 1
     return None
 
-def solve2(cases):
-    return solve(cases)
+def solve2(cases, answer):
+    cases = [int(i) for i in cases.split('\n') if i]
+
+    for i in range(len(cases)):
+        num = cases[i]
+        n = i
+        while num < answer and n < len(cases):
+            n += 1
+            num += cases[n]
+        if num == answer:
+            print(i, cases[i], n, cases[n], num)
+            return cases[i] + cases[n]
+
+    return None
 
 if __name__ == '__main__':
     test_results = solve(TEST, 5)
@@ -1056,10 +1068,11 @@ if __name__ == '__main__':
     results = solve(INPUT, 25)
     print(results)
 
-    # test_results = solve2(TEST)
-    # if test_results != 8:
-    #     print(test_results, 'should be 8')
-    #     exit()
 
-    # results = solve2(INPUT)
-    # print(results)
+    test_results = solve2(TEST, 127)
+    if test_results != 62:
+        print(test_results, 'should be 62')
+        exit()
+
+    result = solve2(INPUT, results)
+    print(result)
