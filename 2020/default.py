@@ -1023,17 +1023,24 @@ TEST = '''35
 '''
 
 def solve(cases, num):
+    cases = cases.split('\n')
     n = num
     while n < len(cases):
          priors = cases[n - num : n]
          current = cases[n]
+         if not current:
+             return n
+         current = int(current)
+         for i in range(len(priors)):
+             priors[i] = int(priors[i])
          for m in priors:
              found = False
-             if current - m not in priors:
+             if current - m in priors:
                  found = True
                  break
          if not found:
             return current
+         n += 1
     return None
 
 def solve2(cases):
