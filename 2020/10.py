@@ -208,6 +208,15 @@ def brute(cases, valids = 1):
             now_valids += brute(cases, 1)
     return valids + now_valids 
 
+def combine(numbers, final):
+    initial = 0
+    if not valid([initial] + numbers + [max(numbers) + 3]):
+        print("Seriously, should be valid.")
+        exit()
+
+    for i in range(len(numbers)):
+        pass
+
 def calculate(cases):
     tests = cases.split('\n')
     tests = [int(i) for i in tests if i]
@@ -215,7 +224,11 @@ def calculate(cases):
     if not valid(tests):
         print("should be valid")
         exit()
-    return brute(tests, 1)
+
+    # return brute(tests, 1)
+
+    final = solve(cases)
+    return combine(tests, final)
 
 
 if __name__ == '__main__':
