@@ -1,3 +1,4 @@
+import math
 INPUT = '''77
 58
 25
@@ -145,6 +146,8 @@ TEST2 = '''28
 3
 '''
 
+RUNS = 0
+TOTAL = 0
 def solve(cases):
     
     cases = cases.split('\n')
@@ -210,12 +213,48 @@ def brute(cases, valids = 1):
 
 def combine(numbers, final):
     initial = 0
-    if not valid([initial] + numbers + [max(numbers) + 3]):
-        print("Seriously, should be valid.")
-        exit()
+    # if not valid([initial] + numbers + [max(numbers) + 3]):
+    #     print("Seriously, should be valid.")
+    #     exit()
 
-    for i in range(len(numbers)):
-        pass
+    length = len(numbers)
+    total = 1
+    for i in range(length):
+        j = 0
+        for j in range(1, length - i):
+            if numbers[i + j] - numbers[i] > 3:
+                break
+        if j > 1:
+            if j == 2:
+                total *= j
+            if j == 3:
+                total *= j * 2
+        if i < length:
+            total += combine(numbers[:i] + numbers[i + 1:], final)
+    global RUNS
+    global TOTAL
+    RUNS += 1
+    if total > TOTAL:
+        TOTAL = total
+        print(RUNS, TOTAL, length)
+    return total
+
+def addify(numbers, cache, i):
+    #don't recalculcate
+    if i in cache:
+        return cache[i]
+    #break the recursion
+    if i + 1 == len(numbers):
+        return 1
+    
+    result = 0
+    #limit the search to possible values in a sorted list
+    for j in range(i + 1, i + 3):
+        if j < len(numbers) and numbers[j] - 3 <= numbers[i]:
+            result += addify(numbers, cache, j)
+    cache[j]  = result
+
+    return result
 
 def calculate(cases):
     tests = cases.split('\n')
@@ -227,8 +266,10 @@ def calculate(cases):
 
     # return brute(tests, 1)
 
-    final = solve(cases)
-    return combine(tests, final)
+    # final = solve(cases)
+    # return combine(tests, final)
+
+    return addify(tests, {}, 0)
 
 
 if __name__ == '__main__':
