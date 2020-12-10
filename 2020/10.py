@@ -177,6 +177,45 @@ def solve2(cases):
         count += delta
     return count
 
+def valid(numbers):
+    first = numbers[0]
+    for number in numbers[1:]:
+        # new = number - first
+        # print(new)
+        if number - first not in [1, 3]:
+            return False
+        first = number
+    return True
+
+def solve3(cases):
+    cases = cases.split('\n')
+    cases = [int(i) for i in cases if i]
+    cases.sort()
+
+    count = 1
+    for i in range(1, len(cases) - 1):
+        if valid(cases[:i] + cases[i + 1:]):
+            count # is what. Not sure how to solve this.
+
+def brute(cases, valids = 1):
+
+    if not valid(cases):
+        return 0
+    now_valids = 1
+    for i in range(len(cases)):
+        new = cases[:i] + cases[i + 1:]
+        if valid(new):
+            now_valids += brute(cases, 1)
+    return valids + now_valids 
+
+def calculate(cases):
+    tests = cases.split('\n')
+    tests = [int(i) for i in tests if i]
+    tests.sort()
+    if not valid(tests):
+        print("should be valid")
+        exit()
+    return brute(tests, 1)
 
 
 if __name__ == '__main__':
@@ -197,17 +236,16 @@ if __name__ == '__main__':
         print(results, "should be 2059")
         exit()
 
-    
-    test_results = solve2(TEST)
+    test_results = calculate(TEST)
     if test_results != 8:
         print(test_results, 'should be 8')
         exit()
     print('results', test_results)
-    test_results = solve2(TEST2)
+    test_results = calculate(TEST2)
     if test_results != 19208:
         print(test_results, 'should be 19208')
         exit()
     print('results', test_results)
 
-    results = solve2(INPUT)
+    results = calculate(INPUT)
     print(results)
