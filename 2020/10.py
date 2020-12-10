@@ -180,11 +180,21 @@ if __name__ == '__main__':
 
     results = solve(INPUT)
     print(results)
+    if results != 2059:
+        print(results, "should be 2059")
+        exit()
 
-    # test_results = solve2(TEST)
-    # if test_results != 8:
-    #     print(test_results, 'should be 8')
-    #     exit()
+    
+    test_results = solve2(TEST)
+    if test_results != 8:
+        print(test_results, 'should be 8')
+        exit()
+    print('results', test_results)
+    test_results = solve2(TEST2)
+    if test_results != 19208:
+        print(test_results, 'should be 19208')
+        exit()
+    print('results', test_results)
 
-    # results = solve2(INPUT)
-    # print(results)
+    results = solve2(INPUT)
+    print(results)
