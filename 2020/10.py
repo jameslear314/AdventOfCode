@@ -164,7 +164,19 @@ def solve(cases):
 
 
 def solve2(cases):
-    return solve(cases)
+    max = solve(cases)
+    cases = cases.split('\n')
+
+    count = 1
+    length = len(cases)
+    for i in range(length):
+        delta = 1
+        while cases[length - i] - cases[length - i - delta] <= 3:
+            delta += 1
+        count *= delta
+    return count
+
+
 
 if __name__ == '__main__':
     test_results = solve(TEST)
