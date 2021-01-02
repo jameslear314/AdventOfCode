@@ -407,7 +407,7 @@ def combinatoric(numbers):
 def numberify(input):
     input = input.split('\n')
     input = [int(n) for n in input if n]
-    # Problem specific kink
+    # Problem specific kink: 0 must be included
     if 0 not in input:
         input = [0] + input
     input.sort()
@@ -427,6 +427,15 @@ def prepare_combinatoric(input):
             start = i
     return diffs, ranges
 
+def solve_part2_a(numbers, groups):
+    count = 1
+    for group in groups:
+        subset = numbers[group[0]:group[1]]
+        count *= combinatoric(subset)
+    return count
+
+def solve_part2(numbers, groups):
+    return solve_part2_a(numbers, groups)
 
 if __name__ == '__main__':
     test_results = solve(TEST)
@@ -446,59 +455,23 @@ if __name__ == '__main__':
         print(results, "should be 2059")
         exit()
 
-    # Figure out what is going on in this input
-    # print(INPUT[:10])
-    input = numberify(INPUT)
-    # print(input[:5])
-    diffs, ranges = prepare_combinatoric(input)
-
-    if list(diffs) != [1, 3]:
-        print("ERROR: Input had weird gaps")
-    print(ranges[:2])
-    for subrange in ranges[:5]:
-        print(input[subrange[0] : subrange[1]])
-    
-    lengths = [r[1] - r[0] for r in ranges]
-    print("Range lengths are", min(lengths), '-', max(lengths), 'split across', len(ranges), 'ranges and inputs:', len(input))
-
-    test_numbers = numberify(TEST)
-    diffs, ranges = prepare_combinatoric(test_numbers)
-    test_results = 1
-    for subrange in ranges:
-        test_results *= combinatoric(test_numbers[subrange[0]:subrange[1]])
-    if test_results != 8:
-        print('part 2 test 1 results', test_results, 'should be 8 from list of length', len(test_numbers))
-        exit()
-    
-
-    test_numbers = numberify(TEST2)
-    diffs, ranges = prepare_combinatoric(test_numbers)
-    test_results = 1
-    for subrange in ranges:
-        test_results *= combinatoric(test_numbers[subrange[0]:subrange[1]])
-    if test_results != 19208:
-        print('part 2 test 1 results', test_results, 'should be 19208 from list of length', len(test_numbers))
-        print(min(test_numbers), max(test_numbers))
-        # exit()
-
     numbers = numberify(INPUT)
-    diffs, ranges = prepare_combinatoric(numbers)
-    total = 1
-    for subrange in ranges:
-        total *= combinatoric(numbers[subrange[0]:subrange[1]])
-    print('total combinations', total)
+    input_diff, input_ranges = prepare_combinatoric(numbers)
+    test1_numbers = numberify(TEST)
+    test1_diff, test1_ranges = prepare_combinatoric(test1_numbers)
+    test2_numbers = numberify(TEST2)
+    test2_diff, test2_ranges = prepare_combinatoric(test2_numbers)
+    results2 = -1
+    is_valid = True
 
-    # # Failed initial attempts, including referencing functioning algorithms
-    # test_results = calculate(TEST)
-    # if test_results != 8:
-    #     print(test_results, 'should be 8')
-    #     exit()
-    # print('results', test_results)
-    # test_results = calculate(TEST2)
-    # if test_results != 19208:
-    #     print(test_results, 'should be 19208')
-    #     exit()
-    # print('results', test_results)
-
-    # results = calculate(INPUT)
-    # print(results)
+    test_results = solve_part2(test1_numbers, test1_ranges)
+    if test_results != 8:
+        print("part 2 test 1 should be 8 but was", test_results)
+        is_valid = False
+    test_results2 = solve_part2(test2_numbers, test2_ranges)
+    if test_results != 19208:
+        print("part 2 test 2 should be 19208 but was", test_results2)
+        is_valid = False
+    if True:
+        results2 = solve_part2(numbers, input_ranges)
+    print("part 2 results:", results2)
