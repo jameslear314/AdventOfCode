@@ -487,8 +487,24 @@ def solve_part2_b(numbers, groups):
         count *= sum_combinations(subset)
     return count
 
+def cache_combinations(numbers):
+    start = numbers[0]
+    if start != 0:
+        print("ERROR: Start must be 0")
+    jolt_to_count = {0: 1} # At least one combination must exist
+    for number in numbers[1:]:
+        min_jolts = number - 3
+        new_count = 0
+        for i in range(min_jolts, number):
+            if i in jolt_to_count:
+                new_count += jolt_to_count[i]
+        jolt_to_count[number] = new_count
+        print(new_count)
+    return new_count # Conveniently, the last count is equal to the total combinations
+
+
 def solve_part2(numbers, groups):
-    return sum_combinations_brute(numbers)
+    return cache_combinations(numbers)
 
 if __name__ == '__main__':
     test_results = solve(TEST)
