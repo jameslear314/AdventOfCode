@@ -434,8 +434,32 @@ def solve_part2_a(numbers, groups):
         count *= combinatoric(subset)
     return count
 
+def sum_combinations(numbers):
+    start = numbers[0]
+    finish = numbers[-1]
+    combinations = [[numbers[0]]]
+    for number in numbers[1:]:
+        new_combinations = combinations[:]
+        for combination in combinations:
+            new_combinations.append(combination + [number])
+        combinations = new_combinations[:]
+
+    valids = [c for c in combinations if start in c and finish in c]
+    if len(numbers) == 1:
+        return len(valids)
+    results = [c for c in valids if max(prepare_combinatoric(c)[0]) <= 3]
+    return len(results)
+
+def solve_part2_b(numbers, groups):
+    count = 1
+    for group in groups:
+        subset = numbers[group[0]:group[1]]
+        print(subset, count)
+        count *= sum_combinations(subset)
+    return count
+
 def solve_part2(numbers, groups):
-    return solve_part2_a(numbers, groups)
+    return solve_part2_b(numbers, groups)
 
 if __name__ == '__main__':
     test_results = solve(TEST)
@@ -472,6 +496,6 @@ if __name__ == '__main__':
     if test_results != 19208:
         print("part 2 test 2 should be 19208 but was", test_results2)
         is_valid = False
-    if True:
+    if is_valid:
         results2 = solve_part2(numbers, input_ranges)
     print("part 2 results:", results2)
