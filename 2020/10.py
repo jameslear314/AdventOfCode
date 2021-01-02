@@ -1,4 +1,6 @@
 import math
+from timeit import default_timer as timer
+
 INPUT = '''77
 58
 25
@@ -450,6 +452,33 @@ def sum_combinations(numbers):
     results = [c for c in valids if max(prepare_combinatoric(c)[0]) <= 3]
     return len(results)
 
+def sum_combinations_brute(numbers):
+    overall_start_time = timer()
+    start = numbers[0]
+    finish = numbers[-1]
+    combinations = [[numbers[0]]]
+    group = 0
+    last_duration = 0
+    for number in numbers[1:]:
+        group += 1
+        start_time = timer()
+        new_combinations = combinations[:]
+        for combination in combinations:
+            new_combinations.append(combination + [number])
+        combinations = new_combinations[:]
+        valid_combinations = [c for c in combinations if len(c) == 1 or max(prepare_combinatoric(c)[0]) <= 3]
+        combinations = valid_combinations[:]
+        lengths = [len(c) for c in combinations]
+        end_time = timer()
+        group_duration = end_time - start_time
+        overall_duration = end_time - overall_start_time
+        duration_power = math.pow(group_duration - last_duration, len(numbers) - group)
+        print("Group", group, "had", len(valid_combinations), "valid combinations, took", overall_duration, "seconds")
+
+    valids = [c for c in combinations if start in c and finish in c]
+    results = [c for c in valids if max(prepare_combinatoric(c)[0]) <= 3]
+    return len(results)
+
 def solve_part2_b(numbers, groups):
     count = 1
     for group in groups:
@@ -459,7 +488,7 @@ def solve_part2_b(numbers, groups):
     return count
 
 def solve_part2(numbers, groups):
-    return solve_part2_b(numbers, groups)
+    return sum_combinations_brute(numbers)
 
 if __name__ == '__main__':
     test_results = solve(TEST)
@@ -493,7 +522,7 @@ if __name__ == '__main__':
         print("part 2 test 1 should be 8 but was", test_results)
         is_valid = False
     test_results2 = solve_part2(test2_numbers, test2_ranges)
-    if test_results != 19208:
+    if test_results2 != 19208:
         print("part 2 test 2 should be 19208 but was", test_results2)
         is_valid = False
     if is_valid:
