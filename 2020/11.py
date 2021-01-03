@@ -151,8 +151,10 @@ def solve(cases):
     last = None
     current = cases[:]
 
+    round = 0
     while last != current:
         next = current[:]
+        round += 1
         for row in range(rows):
             for column in range(columns):
                 cell = current[row][column]
@@ -167,10 +169,15 @@ def solve(cases):
         current = next[:]
     
     count = 0
+    output_array = []
     for row in current:
+        output_array.append(''.join(row))
         for value in row:
             if value == '1':
                 count += 1
+
+    print("Finished at round", round)
+    print('\n'.join(output_array))
     return count
 
 def solve2(cases):
