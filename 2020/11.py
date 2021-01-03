@@ -145,43 +145,52 @@ def filled_adjacent(grid, row, rows, column, columns):
                     count += 1
     return count
 
-def output_results(round, grid, rows, columns):
+def output_results(round, grid, rows, columns, outputs='L#.'):
     print()
     print("Results for round", round)
     for row in range(rows):
         for column in range(columns):
             value = grid[row][column]
             if value == '0':
-                print('L', end='')
+                print(outputs[0], end='')
             if value == '1':
-                print('#', end='')
+                print(outputs[1], end='')
             if value == '9':
-                print('.', end='')
+                print(outputs[2], end='')
         print()
 
 def solve(cases):
     rows = len(cases)
     columns = len(cases[0])
-    last = None
     current = cases[:]
 
     round = 0
-    while last != current:
-        next = current[:]
+    output_results(round, current, rows, columns)
+    fills = True
+    empties = True
+    while fills or empties: #If any seat changes occur, continue
         round += 1
+        fills = []
+        empties = []
         for row in range(rows):
             for column in range(columns):
                 cell = current[row][column]
                 if cell == '9':
                     continue
                 adjacents = filled_adjacent(current, row, rows, column, columns)
+                print(cell,'at',row, column, adjacents)
                 if cell == '1' and adjacents >= 4:
-                    next[row][column] = '0'
+                    print('Leave seat', row, column)
+                    empties.append((row, column))
                 elif cell == '0' and adjacents == 0:
-                    next[row][column] = '1'
-        last = current[:]
-        current = next[:]
-        output_results(round, next, rows, columns)
+                    print('Fill  seat', row, column)
+                    fills.append((row,column))
+        
+        for fill in fills:
+            current[fill[0]][fill[1]] = '1'
+        for empty in empties:
+            current[empty[0]][empty[1]] = '0'
+        output_results(round, current, rows, columns)
     
     count = 0
     for row in current:
@@ -191,15 +200,59 @@ def solve(cases):
 
     print()
     print("Finished")
+    print('result at 1,3:', current[1][3], 'with adjacents:', filled_adjacent(current,1,rows,3,columns))
     output_results(round, current, rows, columns)
+    output_results(round, current, rows, columns, '019')
     return count
 
 def solve2(cases):
     return solve(cases)
 
+def confirm_adjacents():
+    test = [['1']]
+    r0 = confirm_adjacents(test, 0, 1, 0, 1)
+    if r0 != 0:
+        print('ERROR A: checked self', r0)
+        return False
+
+    test = [['0','1'],['1','1']]
+    r1 = confirm_adjacents(test, 0, 2, 0, 2)
+    r2 = confirm_adjacents(test, 0, 2, 1, 2)
+    r3 = confirm_adjacents(test, 1, 2, 0, 2)
+    r4 = confirm_adjacents(test, 1, 2, 1, 2)
+    if r1 != 3:
+        print('ERROR B: not 3', r1)
+        return False
+    if r2 != 2:
+        print('ERROR C: not 2', r2)
+        return False
+    if r3 != 2:
+        print('ERROR C: not 2', r3)
+        return False
+    if r4 != 2:
+        print('ERROR C: not 2', r4)
+        return False
+
+    test = [['9','1','0'],
+            ['1','1','1'],
+            ['1','1','1']]
+    expectations = [[3, 3, 3],
+                    [4, 6, 4],
+                    [3, 5, 3]]
+    for i in range(3):
+        for j in range(3):
+            result = confirm_adjacents(test, i, 3, j, 3)
+            if result != expectations[i][j]:
+                print('ERROR MULTI', i, j, ':', result, 'not', expectations[i][j])
+                return False
+
+    return True
+
 if __name__ == '__main__':
+    if not confirm_adjacents:
+        print('CRITICAL: could not process adjacents')
     test_results = solve(graph(TEST))
-    if test_results != len(TEST_RESULT.split('1')) -1:
+    if test_results != len(TEST_RESULT.split('1')) - 1:
         print(test_results, 'should be', len(TEST_RESULT.split('1')) -1)
         exit()
     print('results', test_results)
