@@ -215,18 +215,8 @@ def filled_adjacent(grid, row, rows, column, columns):
     return count
 
 def output_results(round, grid, rows, columns, outputs='L#.', confirm=False):
-    confirm_print(confirm)
-    confirm_print("Results for round", round, confirm)
-    for row in range(rows):
-        for column in range(columns):
-            value = grid[row][column]
-            if value == '0':
-                confirm_print(outputs[0], confirm)
-            if value == '1':
-                confirm_print(outputs[1], confirm)
-            if value == '9':
-                confirm_print(outputs[2], confirm)
-        confirm_print(confirm)
+    if confirm:
+        print(produce_output(round, grid, rows, columns, outputs))
 
 def produce_output(round, grid, rows, columns, outputs='L#.', confirm=False):
     encoding={'0':0,'1':1,'9':2}
@@ -239,22 +229,30 @@ def produce_output(round, grid, rows, columns, outputs='L#.', confirm=False):
 
 
 def solve(cases, confirm=False):
-    rows = len(cases)
-    columns = len(cases[0])
+    current = graph(cases.strip())
+    rows = len(current)
+    columns = len(current[0])
     current = cases[:]
 
     round = 0
-    output_results(round, current, rows, columns)
     fills = True
     empties = True
-    while fills or empties: #If any seat changes occured, continue
+
+    last_output = ''
+    output = cases.strip()
+    while last_output != output: #If any seat changes occured, continue
+        last_output = output
+        current = graph(last_output)
         if confirm:
-            expectation = ROUND[round]
+            expectation = ROUND[round].strip()
             output = produce_output(round, current, rows, columns)
             if expectation != output:
                 print('ERROR: Round', round, 'failed with output')
                 print(output)
-                exit()
+                for index, char in enumerate(expectation):
+                    if char != output[index]:
+                        print('First error at', index, char, output[index])
+                        exit()
 
         round += 1
         fills = []
@@ -265,7 +263,7 @@ def solve(cases, confirm=False):
             current[fill[0]][fill[1]] = '1'
         for empty in empties:
             current[empty[0]][empty[1]] = '0'
-        output = produce_output(round, current, rows, columns)
+        output = produce_output(round, current, rows, columns, '019').strip()
     
     count = 0
     for row in current:
@@ -363,13 +361,13 @@ def confirm_adjacents(confirm=True):
 if __name__ == '__main__':
     if not confirm_adjacents:
         confirm_print('CRITICAL: could not process adjacents', confirm=True)
-    test_results = solve(graph(TEST), confirm=True)
+    test_results = solve(TEST, confirm=True)
     if test_results != len(TEST_RESULT.split('1')) - 1:
         confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, confirm=True)
         exit()
     confirm_print('results', test_results, confirm=True)
 
-    results = solve(graph(INPUT))
+    results = solve(INPUT)
     confirm_print(results, confirm=True)
 
     # test_results = solve2(TEST)
