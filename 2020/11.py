@@ -145,6 +145,20 @@ def filled_adjacent(grid, row, rows, column, columns):
                     count += 1
     return count
 
+def output_results(round, grid, rows, columns):
+    print()
+    print("Results for round", round)
+    for row in range(rows):
+        for column in range(columns):
+            value = grid[row][column]
+            if value == '0':
+                print('L', end='')
+            if value == '1':
+                print('#', end='')
+            if value == '9':
+                print('.', end='')
+        print()
+
 def solve(cases):
     rows = len(cases)
     columns = len(cases[0])
@@ -167,17 +181,17 @@ def solve(cases):
                     next[row][column] = '1'
         last = current[:]
         current = next[:]
+        output_results(round, next, rows, columns)
     
     count = 0
-    output_array = []
     for row in current:
-        output_array.append(''.join(row))
         for value in row:
             if value == '1':
                 count += 1
 
-    print("Finished at round", round)
-    print('\n'.join(output_array))
+    print()
+    print("Finished")
+    output_results(round, current, rows, columns)
     return count
 
 def solve2(cases):
