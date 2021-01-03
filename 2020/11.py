@@ -350,6 +350,14 @@ def confirm_adjacents(confirm=True):
             confirm_print(empties, confirm)
             return False
 
+    round1=ROUND[1]
+    fills, empties = list_changes(2, 10, round1)
+    expectations = [(0,2),(0,3),(0,5),(0,6)]
+    for expectation in expectations:
+        if expectation not in empties:
+            print('ERROR ROUND1', expectation, empties)
+            exit()
+
     return True
 
 if __name__ == '__main__':
