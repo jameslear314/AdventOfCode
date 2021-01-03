@@ -166,7 +166,12 @@ def solve(cases):
         last = current[:]
         current = next[:]
     
-    return len(TEST_RESULT.split('1')) -1
+    count = 0
+    for row in current:
+        for value in row:
+            if value == '1':
+                count += 1
+    return count
 
 def solve2(cases):
     return solve(cases)
@@ -178,7 +183,7 @@ if __name__ == '__main__':
         exit()
     print('results', test_results)
 
-    results = solve(INPUT)
+    results = solve(graph(INPUT))
     print(results)
 
     # test_results = solve2(TEST)
