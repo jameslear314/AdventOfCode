@@ -103,6 +103,75 @@ TEST = '''0900900900
 0900000090
 0900000900'''
 
+ROUND = {
+    0: '''L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL
+''',
+    1: '''#.##.##.##
+#######.##
+#.#.#..#..
+####.##.##
+#.##.##.##
+#.#####.##
+..#.#.....
+##########
+#.######.#
+#.#####.##
+''',
+    2: '''#.LL.L#.##
+#LLLLLL.L#
+L.L.L..L..
+#LLL.LL.L#
+#.LL.LL.LL
+#.LLLL#.##
+..L.L.....
+#LLLLLLLL#
+#.LLLLLL.L
+#.#LLLL.##
+''',
+    3: '''#.##.L#.##
+#L###LL.L#
+L.#.#..#..
+#L##.##.L#
+#.##.LL.LL
+#.###L#.##
+..#.#.....
+#L######L#
+#.LL###L.L
+#.#L###.##
+''',
+    4: '''#.#L.L#.##
+#LLL#LL.L#
+L.L.L..#..
+#LLL.##.L#
+#.LL.LL.LL
+#.LL#L#.##
+..L.L.....
+#L#LLLL#L#
+#.LLLLLL.L
+#.#L#L#.##
+''',
+    5:'''#.#L.L#.##
+#LLL#LL.L#
+L.#.L..#..
+#L##.##.L#
+#.#L.LL.LL
+#.#L#L#.##
+..L.L.....
+#L#L##L#L#
+#.LLLLLL.L
+#.#L#L#.##
+'''
+} 
+
 TEST_RESULT = '''1910901911
 1000100901
 0919099199
@@ -145,21 +214,31 @@ def filled_adjacent(grid, row, rows, column, columns):
                     count += 1
     return count
 
-def output_results(round, grid, rows, columns, outputs='L#.'):
-    print()
-    print("Results for round", round)
+def output_results(round, grid, rows, columns, outputs='L#.', confirm=False):
+    confirm_print(confirm)
+    confirm_print("Results for round", round, confirm)
     for row in range(rows):
         for column in range(columns):
             value = grid[row][column]
             if value == '0':
-                print(outputs[0], end='')
+                confirm_print(outputs[0], confirm)
             if value == '1':
-                print(outputs[1], end='')
+                confirm_print(outputs[1], confirm)
             if value == '9':
-                print(outputs[2], end='')
-        print()
+                confirm_print(outputs[2], confirm)
+        confirm_print(confirm)
 
-def solve(cases):
+def produce_output(round, grid, rows, columns, outputs='L#.', confirm=False):
+    encoding={'0':0,'1':1,'9':2}
+    chars = []
+    for row in range(rows):
+        for column in range(columns):
+            chars.append(outputs[encoding[grid[row][column]]]) # One liner because I don't expect to look at it again
+        chars.append('\n')
+    return ''.join(chars)
+
+
+def solve(cases, confirm=False):
     rows = len(cases)
     columns = len(cases[0])
     current = cases[:]
@@ -168,29 +247,25 @@ def solve(cases):
     output_results(round, current, rows, columns)
     fills = True
     empties = True
-    while fills or empties: #If any seat changes occur, continue
+    while fills or empties: #If any seat changes occured, continue
+        if confirm:
+            expectation = ROUND[round]
+            output = produce_output(round, current, rows, columns)
+            if expectation != output:
+                print('ERROR: Round', round, 'failed with output')
+                print(output)
+                exit()
+
         round += 1
         fills = []
         empties = []
-        for row in range(rows):
-            for column in range(columns):
-                cell = current[row][column]
-                if cell == '9':
-                    continue
-                adjacents = filled_adjacent(current, row, rows, column, columns)
-                print(cell,'at',row, column, adjacents)
-                if cell == '1' and adjacents >= 4:
-                    print('Leave seat', row, column)
-                    empties.append((row, column))
-                elif cell == '0' and adjacents == 0:
-                    print('Fill  seat', row, column)
-                    fills.append((row,column))
+        fills, empties = list_changes(rows, columns, current, confirm=confirm)
         
         for fill in fills:
             current[fill[0]][fill[1]] = '1'
         for empty in empties:
             current[empty[0]][empty[1]] = '0'
-        output_results(round, current, rows, columns)
+        output = produce_output(round, current, rows, columns)
     
     count = 0
     for row in current:
@@ -198,21 +273,43 @@ def solve(cases):
             if value == '1':
                 count += 1
 
-    print()
-    print("Finished")
-    print('result at 1,3:', current[1][3], 'with adjacents:', filled_adjacent(current,1,rows,3,columns))
+    confirm_print(confirm)
+    confirm_print("Finished", confirm)
+    confirm_print('result at 1,3:', current[1][3], 'with adjacents:', filled_adjacent(current,1,rows,3,columns), confirm)
     output_results(round, current, rows, columns)
     output_results(round, current, rows, columns, '019')
     return count
 
+def confirm_print(*args):
+    if args and args[-1]:
+        for arg in args[:-1]:
+            print(arg, end=' ')
+        print()
+
+def list_changes(rows, columns, current, fills=[], empties=[], confirm=False):
+    for row in range(rows):
+        for column in range(columns):
+            cell = current[row][column]
+            if cell == '9':
+                continue
+            adjacents = filled_adjacent(current, row, rows, column, columns)
+            confirm_print(cell,'at',row, column, 'adjacents', adjacents, confirm)
+            if cell == '1' and adjacents >= 4:
+                confirm_print('Leave seat', row, column, confirm)
+                empties.append((row, column))
+            elif cell == '0' and adjacents == 0:
+                confirm_print('Fill  seat', row, column, confirm)
+                fills.append((row,column))
+    return fills[:], empties[:]
+
 def solve2(cases):
     return solve(cases)
 
-def confirm_adjacents():
+def confirm_adjacents(confirm=True):
     test = [['1']]
     r0 = confirm_adjacents(test, 0, 1, 0, 1)
     if r0 != 0:
-        print('ERROR A: checked self', r0)
+        confirm_print('ERROR A: checked self', r0, confirm)
         return False
 
     test = [['0','1'],['1','1']]
@@ -221,16 +318,16 @@ def confirm_adjacents():
     r3 = confirm_adjacents(test, 1, 2, 0, 2)
     r4 = confirm_adjacents(test, 1, 2, 1, 2)
     if r1 != 3:
-        print('ERROR B: not 3', r1)
+        confirm_print('ERROR B: not 3', r1, confirm)
         return False
     if r2 != 2:
-        print('ERROR C: not 2', r2)
+        confirm_print('ERROR C: not 2', r2, confirm)
         return False
     if r3 != 2:
-        print('ERROR C: not 2', r3)
+        confirm_print('ERROR C: not 2', r3, confirm)
         return False
     if r4 != 2:
-        print('ERROR C: not 2', r4)
+        confirm_print('ERROR C: not 2', r4, confirm)
         return False
 
     test = [['9','1','0'],
@@ -243,27 +340,34 @@ def confirm_adjacents():
         for j in range(3):
             result = confirm_adjacents(test, i, 3, j, 3)
             if result != expectations[i][j]:
-                print('ERROR MULTI', i, j, ':', result, 'not', expectations[i][j])
+                confirm_print('ERROR MULTI', i, j, ':', result, 'not', expectations[i][j], confirm)
                 return False
+    fills, empties = list_changes(3, 3, test)
+    expected_empties = [(1,0), (1,1), (1,2), (2,1)]
+    for empty in expected_empties:
+        if empty not in empties:
+            confirm_print('ERROR EMPTY', empty, confirm)
+            confirm_print(empties, confirm)
+            return False
 
     return True
 
 if __name__ == '__main__':
     if not confirm_adjacents:
-        print('CRITICAL: could not process adjacents')
-    test_results = solve(graph(TEST))
+        confirm_print('CRITICAL: could not process adjacents', confirm=True)
+    test_results = solve(graph(TEST), confirm=True)
     if test_results != len(TEST_RESULT.split('1')) - 1:
-        print(test_results, 'should be', len(TEST_RESULT.split('1')) -1)
+        confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, confirm=True)
         exit()
-    print('results', test_results)
+    confirm_print('results', test_results, confirm=True)
 
     results = solve(graph(INPUT))
-    print(results)
+    confirm_print(results, confirm=True)
 
     # test_results = solve2(TEST)
     # if test_results != 8:
-    #     print(test_results, 'should be 8')
+    #     confirm_print(test_results, 'should be 8', confirm=True)
     #     exit()
 
     # results = solve2(INPUT)
-    # print(results)
+    # confirm_print(results, confirm=True)
