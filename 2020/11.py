@@ -1,3 +1,4 @@
+import math
 INPUT = '''00009000009000000000000000090900000090000990900000000900000090000990000000000000000000000000000000
 00000000000000000000000000090009000000000909900000000900000090000000000000000000000900000000000000
 00000000009000000000009000090000000090000000000000000000000090000090090000900900000000000000000000
@@ -209,12 +210,14 @@ def filled_adjacent(grid, row, rows, column, columns):
     count = 0
     for adj_row in adj_rows:
         for adj_column in adj_columns:
-            if adj_row != row and adj_column != column:
-                if grid[adj_row][adj_column] == '1':
+            # Ignore seat in question; count all other fills
+            if adj_row != row or adj_column != column:
+                value = grid[adj_row][adj_column]
+                if value == '1':
                     count += 1
     return count
 
-def output_results(round, grid, rows, columns, outputs='L#.', confirm=False):
+def output_results(round, grid, rows, columns, outputs='L#.', confirm=True):
     if confirm:
         print(produce_output(round, grid, rows, columns, outputs))
 
@@ -235,8 +238,8 @@ def solve(cases, confirm=False):
     current = cases[:]
 
     round = 0
-    fills = True
-    empties = True
+    fills = []
+    empties = []
 
     last_output = ''
     output = cases.strip()
@@ -246,24 +249,54 @@ def solve(cases, confirm=False):
         if confirm:
             expectation = ROUND[round].strip()
             output = produce_output(round, current, rows, columns)
-            if expectation != output:
-                print('ERROR: Round', round, 'failed with output')
+            if expectation != output.strip():
+                print('ERROR: Round', round, 'failed with expectation')
+                print(expectation)
+                print('and output')
                 print(output)
                 for index, char in enumerate(expectation):
                     if char != output[index]:
-                        print('First error at', index, char, output[index])
-                        exit()
+                        row = math.floor(index / (rows + 1))
+                        column = index % (rows + 1)
+                        print('First error at', row, column, 'expected', char, 'but got', output[index])
+                        print('based on adjacents', filled_adjacent(current, row, rows, column, columns))
+                        break
+                print('fills', fills)
+                print('empties', empties)
+                exit()
 
         round += 1
         fills = []
         empties = []
         fills, empties = list_changes(rows, columns, current, confirm=confirm)
         
+        empty_fills_count = 0
+        fill_empties_count = 0
         for fill in fills:
+            if fill in empties:
+                # This is not good. filled_adjacent has a bug.
+                empty_fills_count += 1
             current[fill[0]][fill[1]] = '1'
         for empty in empties:
+            if empty in fills:
+                fill_empties_count += 1
             current[empty[0]][empty[1]] = '0'
         output = produce_output(round, current, rows, columns, '019').strip()
+
+        # Parentheses for grouping logical bug detection
+        if (output == last_output and (fills or empties)) or (empty_fills_count or fill_empties_count):
+            print("wat. Error in round", round)
+            if output == last_output and (fills or empties):
+                print("Seriously, output should not be constant if seat swaps occurred. Are all fills also empties?")
+            if empty_fills_count or fill_empties_count:
+                print("Seriously, the 'elif' was intended to prevent coordinates from filling and emptying.")
+                e_in_f=[e for e in empties if e in fills]
+                print("Empties in fill:", len(e_in_f))
+                print(e_in_f)
+                f_in_e=[f for f in fills if f in empties]
+                print("Fills in empty:", len(f_in_e))
+                print(f_in_e)
+            exit()
     
     count = 0
     for row in current:
