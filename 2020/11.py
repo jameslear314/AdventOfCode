@@ -184,6 +184,10 @@ TEST_RESULT = '''1910901911
 1900000090
 1910101911'''
 
+PROCESSED_ROUND_VALUES = {
+
+}
+
 def graph(values):
     rows = values.split('\n')
     grid = []
@@ -228,47 +232,38 @@ def produce_output(round, grid, rows, columns, outputs='L#.', confirm=False):
         for column in range(columns):
             chars.append(outputs[encoding[grid[row][column]]]) # One liner because I don't expect to look at it again
         chars.append('\n')
-    return ''.join(chars)
+    return ''.join(chars).strip()
 
 
-def solve(cases, confirm=False):
-    current = graph(cases.strip())
-    rows = len(current)
-    columns = len(current[0])
-    current = cases[:]
-
+def solve(cases, confirm=False, nickname="TESTS"):
     round = 0
-    fills = []
-    empties = []
+    PROCESSED_ROUND_VALUES[nickname] = {
+        round : graph(cases.strip())
+    }
+    
+    rows = len(PROCESSED_ROUND_VALUES[nickname][round])
+    columns = len(PROCESSED_ROUND_VALUES[nickname][round][0])
+
+    # Provide variables which will be set for round 1
+    fills = None
+    empties = None
 
     last_output = ''
     output = cases.strip()
     while last_output != output: #If any seat changes occured, continue
-        last_output = output
-        current = graph(last_output)
-        if confirm:
-            expectation = ROUND[round].strip()
-            output = produce_output(round, current, rows, columns)
-            if expectation != output.strip():
-                print('ERROR: Round', round, 'failed with expectation')
-                print(expectation)
-                print('and output')
-                print(output)
-                for index, char in enumerate(expectation):
-                    if char != output[index]:
-                        row = math.floor(index / (rows + 1))
-                        column = index % (rows + 1)
-                        print('First error at', row, column, 'expected', char, 'but got', output[index])
-                        print('based on adjacents', filled_adjacent(current, row, rows, column, columns))
-                        break
-                print('fills', fills)
-                print('empties', empties)
-                exit()
+        last_output = produce_output(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns, '019')
+        if last_output != output:
+            print("ERROR: produce_output produces inconsistent results in round", round)
+            print(last_output)
+            print()
+            print(output)
+            exit()
 
         round += 1
+        PROCESSED_ROUND_VALUES[nickname][round] = graph(last_output)
         fills = []
         empties = []
-        fills, empties = list_changes(rows, columns, current, confirm=confirm)
+        fills, empties = list_changes(rows, columns, PROCESSED_ROUND_VALUES[nickname][round], confirm=confirm)
         
         empty_fills_count = 0
         fill_empties_count = 0
@@ -276,12 +271,13 @@ def solve(cases, confirm=False):
             if fill in empties:
                 # This is not good. filled_adjacent has a bug.
                 empty_fills_count += 1
-            current[fill[0]][fill[1]] = '1'
+            PROCESSED_ROUND_VALUES[nickname][round][fill[0]][fill[1]] = '1'
         for empty in empties:
             if empty in fills:
+                # This is not good. filled_adjacent has a bug.
                 fill_empties_count += 1
-            current[empty[0]][empty[1]] = '0'
-        output = produce_output(round, current, rows, columns, '019').strip()
+            PROCESSED_ROUND_VALUES[nickname][round][empty[0]][empty[1]] = '0'
+        output = produce_output(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns, '019')
 
         # Parentheses for grouping logical bug detection
         if (output == last_output and (fills or empties)) or (empty_fills_count or fill_empties_count):
@@ -297,18 +293,37 @@ def solve(cases, confirm=False):
                 print("Fills in empty:", len(f_in_e))
                 print(f_in_e)
             exit()
+
+        if confirm:
+            expectation = ROUND[round].strip()
+            print_output = produce_output(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns)
+            if expectation != print_output.strip():
+                print('ERROR: Round', round, 'failed with expectation')
+                print(expectation)
+                print('and output')
+                print(print_output)
+                for index, char in enumerate(expectation):
+                    if char != print_output[index]:
+                        row = math.floor(index / (rows + 1))
+                        column = index % (rows + 1)
+                        print('First error at', row, column, 'expected', char, 'but got', print_output[index])
+                        print('based on adjacents', filled_adjacent(PROCESSED_ROUND_VALUES[nickname][round], row, rows, column, columns))
+                        break
+                print('fills', fills)
+                print('empties', empties)
+                exit()
     
     count = 0
-    for row in current:
+    for row in PROCESSED_ROUND_VALUES[nickname][round]:
         for value in row:
             if value == '1':
                 count += 1
 
     confirm_print(confirm)
     confirm_print("Finished", confirm)
-    confirm_print('result at 1,3:', current[1][3], 'with adjacents:', filled_adjacent(current,1,rows,3,columns), confirm)
-    output_results(round, current, rows, columns)
-    output_results(round, current, rows, columns, '019')
+    confirm_print('result at 1,3:', PROCESSED_ROUND_VALUES[nickname][round][1][3], 'with adjacents:', filled_adjacent(PROCESSED_ROUND_VALUES[nickname][round],1,rows,3,columns), confirm)
+    output_results(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns)
+    output_results(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns, '019')
     return count
 
 def confirm_print(*args):
