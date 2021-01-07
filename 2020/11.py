@@ -261,9 +261,9 @@ def solve(cases, confirm=False, nickname="TESTS"):
 
         round += 1
         PROCESSED_ROUND_VALUES[nickname][round] = graph(last_output)
-        fills = []
-        empties = []
-        fills, empties = list_changes(rows, columns, PROCESSED_ROUND_VALUES[nickname][round], confirm=confirm)
+        results = list_changes(rows, columns, PROCESSED_ROUND_VALUES[nickname][round], confirm=confirm)
+        fills = [r for r in results if results[r] > 0]
+        empties = [r for r in results if results[r] < 0]
         
         empty_fills_count = 0
         fill_empties_count = 0
@@ -287,14 +287,17 @@ def solve(cases, confirm=False, nickname="TESTS"):
             if empty_fills_count or fill_empties_count:
                 print("Seriously, the 'elif' was intended to prevent coordinates from filling and emptying.")
                 e_in_f=[e for e in empties if e in fills]
-                print("Empties in fill:", len(e_in_f))
+                print("Empties in fill:", len(e_in_f), 'of', len(empties))
                 print(e_in_f)
                 f_in_e=[f for f in fills if f in empties]
-                print("Fills in empty:", len(f_in_e))
+                print("Fills in empty:", len(f_in_e), 'of', len(fills))
                 print(f_in_e)
             exit()
 
         if confirm:
+            if round not in ROUND:
+                print("ERROR: Aborting because proceeded too long")
+                break
             expectation = ROUND[round].strip()
             print_output = produce_output(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns)
             if expectation != print_output.strip():
@@ -333,20 +336,28 @@ def confirm_print(*args):
         print()
 
 def list_changes(rows, columns, current, fills=[], empties=[], confirm=False):
+    results = {}
     for row in range(rows):
         for column in range(columns):
             cell = current[row][column]
+            key = (row, column)
             if cell == '9':
                 continue
             adjacents = filled_adjacent(current, row, rows, column, columns)
             confirm_print(cell,'at',row, column, 'adjacents', adjacents, confirm)
             if cell == '1' and adjacents >= 4:
                 confirm_print('Leave seat', row, column, confirm)
-                empties.append((row, column))
+                if key in results:
+                    print("ERROR: key already filled", key, cell)
+                    exit()
+                results[key] = -1
             elif cell == '0' and adjacents == 0:
                 confirm_print('Fill  seat', row, column, confirm)
-                fills.append((row,column))
-    return fills[:], empties[:]
+                if key in results:
+                    print("ERROR: key already filled", key, cell)
+                    exit()
+                results[key] = 1
+    return results
 
 def solve2(cases):
     return solve(cases)
@@ -408,18 +419,19 @@ def confirm_adjacents(confirm=True):
 
 if __name__ == '__main__':
     if not confirm_adjacents:
-        confirm_print('CRITICAL: could not process adjacents', confirm=True)
+        confirm_print('CRITICAL: could not process adjacents', True)
     test_results = solve(TEST, confirm=True)
     if test_results != len(TEST_RESULT.split('1')) - 1:
-        confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, confirm=True)
+        confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, True)
         exit()
-    confirm_print('results', test_results, confirm=True)
+    confirm_print('results', test_results, True)
 
     results = solve(INPUT)
-    confirm_print(results, confirm=True)
+    confirm_print(results, True)
 
     # test_results = solve2(TEST)
     # if test_results != 8:
+    
     #     confirm_print(test_results, 'should be 8', confirm=True)
     #     exit()
 
