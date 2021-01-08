@@ -104,7 +104,7 @@ TEST = '''0900900900
 0900000090
 0900000900'''
 
-ROUND = {
+ROUND1 = {
     0: '''L.LL.LL.LL
 LLLLLLL.LL
 L.L.L..L..
@@ -184,6 +184,89 @@ TEST_RESULT = '''1910901911
 1900000090
 1910101911'''
 
+ROUND2 = {
+0: '''L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL''',
+1: '''#.##.##.##
+#######.##
+#.#.#..#..
+####.##.##
+#.##.##.##
+#.#####.##
+..#.#.....
+##########
+#.######.#
+#.#####.##''',
+2: '''#.LL.LL.L#
+#LLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLL#
+#.LLLLLL.L
+#.LLLLL.L#''',
+3: '''#.L#.##.L#
+#L#####.LL
+L.#.#..#..
+##L#.##.##
+#.##.#L.##
+#.#####.#L
+..#.#.....
+LLL####LL#
+#.L#####.L
+#.L####.L#''',
+4: '''#.L#.L#.L#
+#LLLLLL.LL
+L.L.L..#..
+##LL.LL.L#
+L.LL.LL.L#
+#.LLLLL.LL
+..L.L.....
+LLLLLLLLL#
+#.LLLLL#.L
+#.L#LL#.L#''',
+5: '''#.L#.L#.L#
+#LLLLLL.LL
+L.L.L..#..
+##L#.#L.L#
+L.L#.#L.L#
+#.L####.LL
+..#.#.....
+LLL###LLL#
+#.LLLLL#.L
+#.L#LL#.L#''',
+6: '''#.L#.L#.L#
+#LLLLLL.LL
+L.L.L..#..
+##L#.#L.L#
+L.L#.LL.L#
+#.LLLL#.LL
+..#.L.....
+LLL###LLL#
+#.LLLLL#.L
+#.L#LL#.L#''',
+7: '''#.L#.L#.L#
+#LLLLLL.LL
+L.L.L..#..
+##L#.#L.L#
+L.L#.LL.L#
+#.LLLL#.LL
+..#.L.....
+LLL###LLL#
+#.LLLLL#.L
+#.L#LL#.L#''',
+} # Round 7 is the same as Round 6.
+
 PROCESSED_ROUND_VALUES = {
 
 }
@@ -199,7 +282,7 @@ def graph(values):
             grid[row].append(rows[row][column])
     return grid
 
-def filled_adjacent(grid, row, rows, column, columns):
+def filled_adjacent1(grid, row, rows, column, columns):
     adj_rows = [row]
     adj_columns = [column]
     if row > 0:
@@ -221,6 +304,39 @@ def filled_adjacent(grid, row, rows, column, columns):
                     count += 1
     return count
 
+def filled_adjacent2(grid, row, rows, column, columns):
+    # Check 8 directions.
+    count = 0
+    # Horizontal, vertical
+    for r in range(0, row):
+        count += 1 if grid[r][column] == '1' else 0
+        break
+    for r in range(row + 1, rows):
+        count += 1 if grid[r][column] == '1' else 0
+        break
+    for c in range(0, column):
+        count += 1 if grid[row][c] == '1' else 0
+        break
+    for c in range(column + 1, columns):
+        count += 1 if grid[row][c] == '1' else 0
+        break
+
+    # Diagonals depend on minimum steps to the edge
+    for i in range(1, min(row, column)):
+        count += 1 if grid[row - i][column - i] == '1' else 0
+        break
+    for i in range(1, min(row, columns - column)):
+        count += 1 if grid[row - i][column + i] == '1' else 0
+        break
+    for i in range(1, min(rows - row, column)):
+        count += 1 if grid[row + i][column - i] == '1' else 0
+        break
+    for i in range(1, min(rows - row, columns - column)):
+        count += 1 if grid[row + i][column + i] == '1' else 0
+        break
+    return count
+
+
 def output_results(round, grid, rows, columns, outputs='L#.', confirm=True):
     if confirm:
         print(produce_output(round, grid, rows, columns, outputs))
@@ -235,7 +351,7 @@ def produce_output(round, grid, rows, columns, outputs='L#.', confirm=False):
     return ''.join(chars).strip()
 
 
-def solve(cases, confirm=False, nickname="TESTS"):
+def solve(cases, adjacency_method, visibile_limits, confirm=False, tests=ROUND1, nickname="TESTS"):
     round = 0
     PROCESSED_ROUND_VALUES[nickname] = {
         round : graph(cases.strip())
@@ -261,7 +377,7 @@ def solve(cases, confirm=False, nickname="TESTS"):
 
         round += 1
         PROCESSED_ROUND_VALUES[nickname][round] = graph(last_output)
-        results = list_changes(rows, columns, PROCESSED_ROUND_VALUES[nickname][round], confirm=confirm)
+        results = list_changes(rows, columns, PROCESSED_ROUND_VALUES[nickname][round], adjacency_method=adjacency_method, visibile_limits=visibile_limits, confirm=confirm)
         fills = [r for r in results if results[r] > 0]
         empties = [r for r in results if results[r] < 0]
         
@@ -295,10 +411,10 @@ def solve(cases, confirm=False, nickname="TESTS"):
             exit()
 
         if confirm:
-            if round not in ROUND:
+            if round not in tests:
                 print("ERROR: Aborting because proceeded too long")
                 break
-            expectation = ROUND[round].strip()
+            expectation = tests[round].strip()
             print_output = produce_output(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns)
             if expectation != print_output.strip():
                 print('ERROR: Round', round, 'failed with expectation')
@@ -310,7 +426,7 @@ def solve(cases, confirm=False, nickname="TESTS"):
                         row = math.floor(index / (rows + 1))
                         column = index % (rows + 1)
                         print('First error at', row, column, 'expected', char, 'but got', print_output[index])
-                        print('based on adjacents', filled_adjacent(PROCESSED_ROUND_VALUES[nickname][round], row, rows, column, columns))
+                        print('based on adjacents', adjacency_method(PROCESSED_ROUND_VALUES[nickname][round], row, rows, column, columns))
                         break
                 print('fills', fills)
                 print('empties', empties)
@@ -324,7 +440,7 @@ def solve(cases, confirm=False, nickname="TESTS"):
 
     confirm_print(confirm)
     confirm_print("Finished", confirm)
-    confirm_print('result at 1,3:', PROCESSED_ROUND_VALUES[nickname][round][1][3], 'with adjacents:', filled_adjacent(PROCESSED_ROUND_VALUES[nickname][round],1,rows,3,columns), confirm)
+    confirm_print('result at 1,3:', PROCESSED_ROUND_VALUES[nickname][round][1][3], 'with adjacents:', adjacency_method(PROCESSED_ROUND_VALUES[nickname][round],1,rows,3,columns), confirm)
     output_results(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns)
     output_results(round, PROCESSED_ROUND_VALUES[nickname][round], rows, columns, '019')
     return count
@@ -335,7 +451,7 @@ def confirm_print(*args):
             print(arg, end=' ')
         print()
 
-def list_changes(rows, columns, current, fills=[], empties=[], confirm=False):
+def list_changes(rows, columns, current, adjacency_method=filled_adjacent1, visibile_limits=(-1, -1), confirm=False):
     results = {}
     for row in range(rows):
         for column in range(columns):
@@ -343,15 +459,15 @@ def list_changes(rows, columns, current, fills=[], empties=[], confirm=False):
             key = (row, column)
             if cell == '9':
                 continue
-            adjacents = filled_adjacent(current, row, rows, column, columns)
+            adjacents = adjacency_method(current, row, rows, column, columns)
             confirm_print(cell,'at',row, column, 'adjacents', adjacents, confirm)
-            if cell == '1' and adjacents >= 4:
+            if cell == '1' and adjacents >= visibile_limits[1]:
                 confirm_print('Leave seat', row, column, confirm)
                 if key in results:
                     print("ERROR: key already filled", key, cell)
                     exit()
                 results[key] = -1
-            elif cell == '0' and adjacents == 0:
+            elif cell == '0' and adjacents == visibile_limits[0]:
                 confirm_print('Fill  seat', row, column, confirm)
                 if key in results:
                     print("ERROR: key already filled", key, cell)
@@ -359,81 +475,24 @@ def list_changes(rows, columns, current, fills=[], empties=[], confirm=False):
                 results[key] = 1
     return results
 
-def solve2(cases):
-    return solve(cases)
-
-def confirm_adjacents(confirm=True):
-    test = [['1']]
-    r0 = confirm_adjacents(test, 0, 1, 0, 1)
-    if r0 != 0:
-        confirm_print('ERROR A: checked self', r0, confirm)
-        return False
-
-    test = [['0','1'],['1','1']]
-    r1 = confirm_adjacents(test, 0, 2, 0, 2)
-    r2 = confirm_adjacents(test, 0, 2, 1, 2)
-    r3 = confirm_adjacents(test, 1, 2, 0, 2)
-    r4 = confirm_adjacents(test, 1, 2, 1, 2)
-    if r1 != 3:
-        confirm_print('ERROR B: not 3', r1, confirm)
-        return False
-    if r2 != 2:
-        confirm_print('ERROR C: not 2', r2, confirm)
-        return False
-    if r3 != 2:
-        confirm_print('ERROR C: not 2', r3, confirm)
-        return False
-    if r4 != 2:
-        confirm_print('ERROR C: not 2', r4, confirm)
-        return False
-
-    test = [['9','1','0'],
-            ['1','1','1'],
-            ['1','1','1']]
-    expectations = [[3, 3, 3],
-                    [4, 6, 4],
-                    [3, 5, 3]]
-    for i in range(3):
-        for j in range(3):
-            result = confirm_adjacents(test, i, 3, j, 3)
-            if result != expectations[i][j]:
-                confirm_print('ERROR MULTI', i, j, ':', result, 'not', expectations[i][j], confirm)
-                return False
-    fills, empties = list_changes(3, 3, test)
-    expected_empties = [(1,0), (1,1), (1,2), (2,1)]
-    for empty in expected_empties:
-        if empty not in empties:
-            confirm_print('ERROR EMPTY', empty, confirm)
-            confirm_print(empties, confirm)
-            return False
-
-    round1=ROUND[1]
-    fills, empties = list_changes(2, 10, round1)
-    expectations = [(0,2),(0,3),(0,5),(0,6)]
-    for expectation in expectations:
-        if expectation not in empties:
-            print('ERROR ROUND1', expectation, empties)
-            exit()
-
-    return True
-
 if __name__ == '__main__':
-    if not confirm_adjacents:
-        confirm_print('CRITICAL: could not process adjacents', True)
-    test_results = solve(TEST, confirm=True)
+    # # Why did I literally test if a method existed? Probably meant to run the method... which is recursive and references itself with the wrong function definition. Delerium.
+    # if not confirm_adjacents():
+    #     confirm_print('CRITICAL: could not process adjacents', True)
+    test_results = solve(TEST, filled_adjacent1, (0, 4), tests=ROUND1, confirm=True, nickname='test1')
     if test_results != len(TEST_RESULT.split('1')) - 1:
         confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, True)
         exit()
     confirm_print('results', test_results, True)
 
-    results = solve(INPUT)
+    results = solve(INPUT, filled_adjacent1, (0, 4), nickname='part1')
     confirm_print(results, True)
 
-    # test_results = solve2(TEST)
-    # if test_results != 8:
-    
-    #     confirm_print(test_results, 'should be 8', confirm=True)
-    #     exit()
+    test_results = solve(TEST, filled_adjacent2, (0, 5), tests=ROUND2, confirm=True, nickname='test2')
+    if test_results != len(TEST_RESULT.split('1')) - 1:
+        confirm_print(test_results, 'should be', len(TEST_RESULT.split('1')) -1, True)
+        exit()
+    confirm_print('results', test_results, True)
 
-    # results = solve2(INPUT)
-    # confirm_print(results, confirm=True)
+    results = solve(INPUT, filled_adjacent2, (0, 5), nickname='part2')
+    confirm_print(results, True)
