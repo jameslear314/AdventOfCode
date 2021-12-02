@@ -1,5 +1,5 @@
 INPUT = 'data.2.txt'
-TEST0 = 'test.0.0.txt'
+TEST0 = 'test.2.0.txt'
 RESULT0 = 150
 RESULT1 = 5
 
@@ -12,34 +12,26 @@ def loadData(filename):
         action, number = line.split(' ')
         number = int(number)
         action = action[0]
-        output.append(action, number)
+        output.append((action, number))
     
     return output
 
 def solve(cases):
-    val = cases[0]
-    result = 0
-    for case in cases[1:]:
-        if case > val:
-            result += 1
-        val = case
-    return result
+    depth, distance = 0, 0
+    for case in cases:
+        value = case[1]
+        action = case[0]
+        if action == 'f':
+            distance += value
+        elif action == 'd':
+            depth += value
+        elif action == 'u':
+            depth -= value
+    return depth * distance
 
 def solve2(cases):
-    end = len(cases)
-    start = 2
-    result = 0
-    for i in range(end):
-        if nexts(cases, i + start) > prior(cases, i + start):
-            result += 1
-    return result
+    return None
 
-def prior(cases, index):
-    values = cases[index - 2 : index + 1]
-    return sum(values)
-def nexts(cases, index):
-    values = cases[index - 1 : index + 2]
-    return sum(values)
 
 if __name__ == '__main__':
     data = loadData(INPUT)
