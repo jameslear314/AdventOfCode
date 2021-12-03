@@ -1,7 +1,7 @@
 INPUT = 'data.2.txt'
 TEST0 = 'test.2.0.txt'
 RESULT0 = 150
-RESULT1 = 5
+RESULT1 = 900
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -30,7 +30,18 @@ def solve(cases):
     return depth * distance
 
 def solve2(cases):
-    return None
+    depth, distance, aim = 0, 0, 0
+    for case in cases:
+        value = case[1]
+        action = case[0]
+        if action == 'f':
+            distance += value
+            depth += aim * value
+        elif action == 'd':
+            aim += value
+        elif action == 'u':
+            aim -= value
+    return depth * distance
 
 
 if __name__ == '__main__':
