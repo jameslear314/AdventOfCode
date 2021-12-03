@@ -1,7 +1,7 @@
 INPUT = 'data.3.txt'
 TEST0 = 'test.3.0.txt'
 RESULT0 = 198
-RESULT1 = 220 # Test case should be 230, but the description is incorrect
+RESULT1 = 230 # Test case should be 230, but the description is incorrect
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -37,20 +37,23 @@ def solve2(cases):
 
     
     for i in range(len(tally)):
+        print("round", i)
+        gamma_tally = tally_v(gamma_cases)
+        epsilon_tally = tally_v(epsilon_cases)
         print(len(gamma_cases), len(epsilon_cases))
-        gamma_ratio = (tally[i] + 0.0)/len(cases)
+        gamma_ratio = (gamma_tally[i] + 0.0)/len(gamma_cases)
+        epsilon_ratio = (epsilon_tally[i] + 0.0)/len(epsilon_cases)
         
         if gamma_ratio < 0.5:
             gamma_key = 0
-            epsilon_key = 1
-        elif gamma_ratio == 0.5:
-            gamma_key = 1
-            epsilon_key = 0
         else:
             gamma_key = 1
+        if epsilon_ratio < 0.5:
+            epsilon_key = 1
+        else:
             epsilon_key = 0
 
-        print("gamma", gamma_key, "epsilon", epsilon_key, "gamma_ratio", gamma_ratio)
+        print("gamma", gamma_key, "epsilon", epsilon_key, "gamma_ratio", gamma_ratio, "epsilon_ratio", epsilon_ratio)
         if len(gamma_cases) > 1:
             gamma_cases = [c for c in gamma_cases if int(c[i]) == gamma_key]
         if len(epsilon_cases) > 1:
