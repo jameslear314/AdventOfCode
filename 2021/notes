@@ -1,0 +1,2 @@
+1. Searched for readlines and the fancy iterator function. Didn't find it, so used a python shell to load a file and used 'dir(fileObject)' to find the right function.
+2. No searches needed
