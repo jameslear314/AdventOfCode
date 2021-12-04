@@ -9,6 +9,7 @@ class Board:
     values = []
     boardRowLimit = 5
     boardColLimit = 5
+    completeAt = None
     def __init__(self, lines):
         self.values = []
         if len(lines) != self.boardRowLimit + 1: # Empty first line
@@ -40,12 +41,16 @@ class Board:
                 return False
         return True
 
-    def completed(self):
+    def completed(self, callNumber = -1):
         for r in range(self.boardRowLimit):
             if self.completedRow(r):
+                if not self.completeAt:
+                    self.completeAt = callNumber
                 return True
         for c in range(self.boardColLimit):
             if self.completedColumn(c):
+                if not self.completeAt:
+                    self.completeAt = callNumber
                 return True
         return False
 
@@ -96,11 +101,11 @@ def solve(cases):
             if winboard:
                 break
         
-        if count in [5, 11] or draw in [24]: #Count check should be 
-            print("Output at", count)
-            for board in boards:
-                output(board)
-                print()
+        # if count in [5, 11] or draw in [24]: #Count check should be 
+        #     print("Output at", count)
+        #     for board in boards:
+        #         output(board)
+        #         print()
         if winboard:
             break
     
@@ -108,7 +113,36 @@ def solve(cases):
 
 
 def solve2(cases):
-    return None
+    draws = cases[0]
+    boards = cases[1]
+    winboard = None
+    wincall = -1
+    wonboards = []
+
+    for board in boards:
+        outputVals(board)
+        print()
+    
+    count = 0
+    for draw in draws:
+        print("Draw:", draw)
+        count += 1
+        boardLen = len(boards)
+        boardsToDel = []
+        for i in range(len(boards)):
+            board = boards[i]
+            board.draw(draw)
+            if board.completed(i):
+                wonboards.append(board)
+                wincall = draw
+                print("Found winning board", board, wincall)
+                boardsToDel.append(i)
+        boardsToDel.sort(reverse=True)
+        for delable in boardsToDel:
+            del(boards[delable])
+        
+    
+    return score(wonboards[-1], wincall)
 
 def score(board, lastCall):
     unmarked = [v.number for v in board.values if not v.hit]
