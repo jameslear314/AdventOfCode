@@ -46,6 +46,14 @@ class Board:
                 return True
         return False
 
+    def draw(self, value):
+        for v in self.values:
+            if v.number == value:
+                v.call()
+                # print("Draw hit", value)
+                return
+        return
+
 
 
 
@@ -67,16 +75,60 @@ def loadData(filename):
     return lines
 
 def solve(cases):
-    val = cases[0]
-    result = 0
-    for case in cases[1:]:
-        if case > val:
-            result += 1
-        val = case
-    return result
+    draws = cases[0]
+    boards = cases[1]
+    winboard = None
+
+    for board in boards:
+        outputVals(board)
+        print()
+    
+    count = 0
+    for draw in draws:
+        count += 1
+        for board in boards:
+            board.draw(draw)
+            if board.completed():
+                winboard = board
+                print("Found winning board", board)
+            if winboard:
+                break
+        
+        if count in [5, 11] or draw in [24]:
+            print("Output at", count)
+            for board in boards:
+                output(board)
+                print()
+        if winboard:
+            break
+    
+    return score(winboard)
+
 
 def solve2(cases):
     return None
+
+def score(board):
+    return 0
+
+def outputVals(board):
+    for i in range(board.boardRowLimit):
+        for j in range(board.boardColLimit):
+            val = board.values[i * board.boardColLimit + j].number
+            valLen = len(str(val))
+            terminator = ' ' * (3 - valLen)
+            print(val, end=terminator)
+        print()
+
+def output(board):
+    hits = []
+    for i in range(board.boardRowLimit):
+        for j in range(board.boardColLimit):
+            if board.values[i * board.boardColLimit + j].hit:
+                print('x', end=' ')
+            else:
+                print('.', end=' ')
+        print()
 
 def prep(data):
     drawlist = data[0]
