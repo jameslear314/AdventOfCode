@@ -3,7 +3,7 @@ TEST0 = 'test.4.0.txt'
 RESULT0 = 4512
 RESULTSUM = 199
 RESULTNUM = 24
-RESULT1 = 5
+RESULT1 = 1924
 
 class Board:
     values = []
@@ -76,6 +76,7 @@ def solve(cases):
     draws = cases[0]
     boards = cases[1]
     winboard = None
+    wincall = -1
 
     for board in boards:
         outputVals(board)
@@ -90,7 +91,8 @@ def solve(cases):
             board.draw(draw)
             if board.completed():
                 winboard = board
-                print("Found winning board", board)
+                wincall = draw
+                print("Found winning board", board, wincall)
             if winboard:
                 break
         
@@ -102,14 +104,16 @@ def solve(cases):
         if winboard:
             break
     
-    return score(winboard)
+    return score(winboard, wincall)
 
 
 def solve2(cases):
     return None
 
-def score(board):
-    return 0
+def score(board, lastCall):
+    unmarked = [v.number for v in board.values if not v.hit]
+    unmarkSum = sum(unmarked)
+    return unmarkSum * lastCall
 
 def outputVals(board):
     for i in range(board.boardRowLimit):
