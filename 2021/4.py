@@ -10,17 +10,19 @@ class Board:
     boardRowLimit = 5
     boardColLimit = 5
     def __init__(self, lines):
+        self.values = []
         if len(lines) != self.boardRowLimit + 1: # Empty first line
             print("ERROR: Board was of wrong shape:", len(lines), len(lines[-1]))
             print("Should be", self.boardRowLimit, "x", self.boardColLimit)
             exit()
-            
+
         for line in lines:
             if len(line) and line: #First line is empty
                 vals = line.split(' ') #space separated
                 vals = [int(v) for v in vals if v]
                 for val in vals:
-                    self.values.append(Value(val)) # Store value and if it has been hit
+                    storedValue = Value(val)
+                    self.values.append(storedValue) # Store value and if it has been hit
     
     def completedRow(self, rowIndex):
         minValToCheck = rowIndex * self.boardColLimit
@@ -54,9 +56,6 @@ class Board:
                 return
         return
 
-
-
-
 class Value:
     number = -1
     hit = False
@@ -65,7 +64,6 @@ class Value:
 
     def call(self):
         self.hit = True
-
 
 
 def loadData(filename):
@@ -79,9 +77,9 @@ def solve(cases):
     boards = cases[1]
     winboard = None
 
-    for board in boards:
-        outputVals(board)
-        print()
+    # for board in boards:
+    #     outputVals(board)
+    #     print()
     
     count = 0
     for draw in draws:
@@ -151,9 +149,12 @@ def prep(data):
     for i in range(0, len(data), boardSize + 1):
         board = Board(data[i:i+boardSize + 1])
         boards.append(board)
-        outputVals(board)
+
+    for i in range(len(boards)):
+        outputVals(boards[i])
         print()
-    
+
+    print(len(data), len(boards))
     return ([int(d) for d in draws], boards)
 
 
