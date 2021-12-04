@@ -140,9 +140,19 @@ def prep(data):
     # One blank, followed by 5 lines of 5 numbers
     # Separated by spaces.
     boards = []
-    while len(data) >= 6: # Magic number
-        boards.append(Board(data[:6]))
-        data = data[6:]
+    # while len(data) >= 6: # Magic number
+    #     print(data[:6])
+    #     board = Board(data[:6])
+    #     boards.append(board)
+    #     outputVals(board)
+    #     print()
+    #     data = data[6:]
+    boardSize = 5
+    for i in range(0, len(data), boardSize + 1):
+        board = Board(data[i:i+boardSize + 1])
+        boards.append(board)
+        outputVals(board)
+        print()
     
     return ([int(d) for d in draws], boards)
 
@@ -151,17 +161,14 @@ if __name__ == '__main__':
     datad = loadData(INPUT)
     testd = loadData(TEST0)
 
-    data = prep(datad)
     test = prep(testd)
-
-    print(test)
-
     test_results = solve(test)
     if test_results != RESULT0:
         print(test_results, 'should be {}'.format(RESULT0))
         exit()
     print('results', test_results)
 
+    data = prep(datad)
     results = solve(data)
     print(results)
 
