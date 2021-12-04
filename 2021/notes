@@ -1,3 +1,4 @@
 1. Searched for readlines and the fancy iterator function. Didn't find it, so used a python shell to load a file and used 'dir(fileObject)' to find the right function.
 2. No searches needed
 3. I wish I remembered all of the nifty tricks I'd learned while working with Bob. They'd be useful while using Python.
+4. I need a refresher on classes; this would be simpler using a class.
