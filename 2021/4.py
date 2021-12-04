@@ -31,6 +31,7 @@ class Board:
         while valToCheck < maxValToCheck:
             if not self.values[valToCheck].hit:
                 return False
+            valToCheck += 1 # Sigh, of course I didn't terminate the loop
         return True
 
     def completedColumn(self, columnIndex):
@@ -52,7 +53,6 @@ class Board:
         for v in self.values:
             if v.number == value:
                 v.call()
-                # print("Draw hit", value)
                 return
         return
 
@@ -77,14 +77,16 @@ def solve(cases):
     boards = cases[1]
     winboard = None
 
-    # for board in boards:
-    #     outputVals(board)
-    #     print()
+    for board in boards:
+        outputVals(board)
+        print()
     
     count = 0
     for draw in draws:
+        print("Draw:", draw)
         count += 1
-        for board in boards:
+        for i in range(len(boards)):
+            board = boards[i]
             board.draw(draw)
             if board.completed():
                 winboard = board
@@ -92,7 +94,7 @@ def solve(cases):
             if winboard:
                 break
         
-        if count in [5, 11] or draw in [24]:
+        if count in [5, 11] or draw in [24]: #Count check should be 
             print("Output at", count)
             for board in boards:
                 output(board)
@@ -138,21 +140,10 @@ def prep(data):
     # One blank, followed by 5 lines of 5 numbers
     # Separated by spaces.
     boards = []
-    # while len(data) >= 6: # Magic number
-    #     print(data[:6])
-    #     board = Board(data[:6])
-    #     boards.append(board)
-    #     outputVals(board)
-    #     print()
-    #     data = data[6:]
     boardSize = 5
     for i in range(0, len(data), boardSize + 1):
         board = Board(data[i:i+boardSize + 1])
         boards.append(board)
-
-    for i in range(len(boards)):
-        outputVals(boards[i])
-        print()
 
     print(len(data), len(boards))
     return ([int(d) for d in draws], boards)
