@@ -1,7 +1,7 @@
 INPUT = 'data.5.txt'
 TEST0 = 'test.5.0.txt'
 RESULT0 = 5
-RESULT1 = 5
+RESULT1 = 12
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -48,14 +48,63 @@ def solve(cases):
                     vents[(i,y)] += 1
     
     collisions = 0
-    print(vents)
+    # print(vents)
     for vent in vents:
         if vents[vent] > 1:
             collisions += 1
     return collisions, vents
 
 def solve2(cases):
-    return None
+    vents = {}
+    for line in cases:
+        start = line.points[0]
+        end = line.points[1]
+        if start.x != end.x and start.y != end.y:
+            if start.x > end.x: # sort on x
+                s = end
+                e = start
+            else:
+                s = start
+                e = end
+            print(s.x, s.y, '->', e.x, e.y)
+            if s.y < e.y:
+                for j in range(e.x - s.x +1):
+                    point = (s.x + j, s.y + j)
+                    if point not in vents:
+                        vents[point] = 1
+                    else:
+                        vents[point] += 1
+            else:
+                for j in range(e.x - s.x + 1):
+                    point = (s.x + j, s.y - j)
+                    if point not in vents:
+                        vents[point] = 1
+                    else:
+                        vents[point] += 1
+            
+        if start.x == end.x:
+            x = start.x
+            ends = start.y, end.y
+            for i in range(min(ends), max(ends) + 1):
+                if (x,i) not in vents:
+                    vents[(x,i)] = 1
+                else:
+                    vents[(x,i)] += 1
+        elif start.y == end.y:
+            y = start.y
+            ends = start.x, end.x
+            for i in range(min(ends), max(ends) + 1):
+                if (i,y) not in vents:
+                    vents[(i,y)] = 1
+                else:
+                    vents[(i,y)] += 1
+    
+    collisions = 0
+    # print(vents)
+    for vent in vents:
+        if vents[vent] > 1:
+            collisions += 1
+    return collisions, vents
 
 
 
@@ -73,11 +122,11 @@ def prep(cases):
     return lines
 
 def render(vents):
-    print(vents)
+    # print(vents)
     xs = [v[0] for v in vents]
     ys = [v[1] for v in vents]
-    maxX = max(xs)
-    maxY = max(ys)
+    maxX = max(xs) + 1
+    maxY = max(ys) + 1
     for i in range(maxX):
         for j in range(maxY):
             if (j, i) not in vents:
@@ -85,6 +134,7 @@ def render(vents):
             else:
                 print(vents[(j,i)], end = '')
         print()
+    print()
 
 if __name__ == '__main__':
     datad = loadData(INPUT)
@@ -102,16 +152,16 @@ if __name__ == '__main__':
     if test_results[0] != RESULT0:
         print(test_results[0], 'should be {}'.format(RESULT0))
         exit()
-    print('results', test_results[0])
 
     results = solve(data)
-    print(results[0])
 
     test_results = solve2(test)
+    render(test_results[1])
 
-    if test_results != RESULT1:
-        print(test_results, 'should be {}'.format(RESULT1))
+    if test_results[0] != RESULT1:
+        print(test_results[0], 'should be {}'.format(RESULT1))
         exit()
+    print("test result matched", test_results[0])
 
     results = solve2(data)
-    print(results)
+    print(results[0])
