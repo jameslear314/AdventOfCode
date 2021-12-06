@@ -1,7 +1,7 @@
 INPUT = 'data.6.txt'
 TEST0 = 'test.6.0.txt'
 RESULT0 = 5934
-RESULT1 = 5
+RESULT1 = 26984457539
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -42,8 +42,8 @@ def solve(cases, count):
 
     
 
-def solve2(cases):
-    return None
+def solve2(cases, count):
+    return solve(cases, count)
 
 if __name__ == '__main__':
     data = loadData(INPUT)
@@ -60,11 +60,12 @@ if __name__ == '__main__':
     results = solve(data, 80)
     print(results)
 
-    test_results = solve2(test)
+    count = 256
+    test_results = solve2(test, count)
 
     if test_results != RESULT1:
         print(test_results, 'should be {}'.format(RESULT1))
         exit()
 
-    results = solve2(data)
+    results = solve2(data, count)
     print(results)
