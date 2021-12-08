@@ -10,7 +10,22 @@ def loadData(filename):
     return lines
 
 def solve(cases):
-    return None
+    patterns = {}
+    for case in cases:
+        pattern, value = case.split('|')
+        patterns[pattern.strip()] = value.strip()
+    
+    allElems = []
+    for pattern in patterns:
+        value = patterns[pattern]
+        elem = value.split(' ')
+        elems = [e for e in elem if e]
+        allElems += elems
+    
+    selected = [a for a in allElems if len(a) in [2, 4, 3, 7]]
+    return len(selected)
+    
+
 
 def solve2(cases):
     return None
