@@ -1,6 +1,6 @@
 INPUT = 'data.8.txt'
 TEST0 = 'test.8.0.txt'
-RESULT0 = 7
+RESULT0 = 26
 RESULT1 = 5
 
 def loadData(filename):
