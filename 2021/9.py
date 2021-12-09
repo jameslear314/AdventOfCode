@@ -10,10 +10,37 @@ def loadData(filename):
     return lines
 
 def solve(cases):
-    return None
+    depths = prep(cases)
+    pits = 0
+    pitsum = 0
+    for y in range(len(depths)):
+        for x in range(len(depths[0])):
+            depth = depths[y][x]
+            adjacents = []
+            if y > 0:
+                adjacents.append(depths[y - 1][x])
+            if y < len(depths) - 1:
+                adjacents.append(depths[y + 1][x])
+            if x > 0:
+                adjacents.append(depths[y][x - 1])
+            if x < len(depths[0]) - 1:
+                adjacents.append(depths[y][x + 1])
+            if depth < min(adjacents):
+                pits += 1
+                pitsum += depth + 1
+    return pitsum
 
 def solve2(cases):
     return None
+
+def prep(cases):
+    depths = []
+    for case in cases:
+        depth = []
+        for char in case:
+            depth.append(int(char))
+        depths.append(depth)
+    return depths
 
 if __name__ == '__main__':
     data = loadData(INPUT)
