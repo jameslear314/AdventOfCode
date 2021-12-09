@@ -64,33 +64,43 @@ def mapBasin(depths, x, y):
     start = (x,y)
     maybes = [start]
 
-    while maybes:
+    while len(maybes):
         nextmaybes = []
         for maybe in maybes:
-            print(maybe)
+            print("Maybe and its adjacents", maybe)
             x = maybe[0]
             y = maybe[1]
-            if y > 0:
-                if depths[x][y-1] != 9:
-                    index = (x,y - 1)
-                    nextmaybes.append(index)
-                    basin.add(index)
-            if y < len(depths[0]) - 1:
-                if depths[x][y+1] != 9:
-                    index = (x,y+1)
-                    nextmaybes.append(index)
-                    basin.add(index)
             if x > 0:
-                if depths[x-1][y] != 9:
-                    index = (x-1,y)
+                adjacent = depths[x-1][y]
+                index = (x-1,y)
+
+                print(adjacent, index)
+                if adjacent != 9:
                     nextmaybes.append(index)
                     basin.add(index)
             if x < len(depths) - 1:
-                if depths[x+1][y] != 9:
-                    index = (x+1,y)
+                adjacent = depths[x+1][y]
+                index = (x+1,y)
+                print(adjacent, index)
+                if adjacent != 9:
+                    nextmaybes.append(index)
+                    basin.add(index)
+            if y > 0:
+                adjacent = depths[x][y-1]
+                index = (x,y - 1)
+                print(adjacent, index)
+                if adjacent != 9:
+                    nextmaybes.append(index)
+                    basin.add(index)
+            if y < len(depths[0]) - 1:
+                adjacent = depths[x][y+1]
+                index = (x,y+1)
+                print(adjacent, index)
+                if adjacent != 9:
                     nextmaybes.append(index)
                     basin.add(index)
         nexts = [n for n in nextmaybes if n not in basin]
+        print(nextmaybes, nexts, basin)
         maybes = nexts
     return basin
 
