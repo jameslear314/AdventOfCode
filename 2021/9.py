@@ -1,7 +1,7 @@
 INPUT = 'data.9.txt'
 TEST0 = 'test.9.0.txt'
 RESULT0 = 15
-RESULT1 = 5
+RESULT1 = 1134
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -31,7 +31,70 @@ def solve(cases):
     return pitsum
 
 def solve2(cases):
-    return None
+    depths = prep(cases)
+
+    basins = list()
+    basins.append(None)
+    indextobasin = {}
+
+    for x in range(len(depths)): # Yes, I know I'm flipping the directions. X is now vertical.
+        print(x)
+        for y in range(len(depths[0])):
+            print(y)
+            index = (x,y)
+            if depths[x][y] == 9:
+                indextobasin[(x,y)] = None
+            else:
+                if index not in indextobasin:
+                    basin = mapBasin(depths, x, y)
+                    # print(basin)
+                    basins.append(basin)
+                    for index in basin:
+                        indextobasin[index] = basin
+
+    sizes = [len(b) for b in basins if b]
+    sizes.sort()
+    for basin in basins:
+        print(basin)
+    print(sizes)
+    return sizes[-1] * sizes[-2] * sizes[-3]
+
+def mapBasin(depths, x, y):
+    basin = set()
+    start = (x,y)
+    maybes = [start]
+
+    while maybes:
+        nextmaybes = []
+        for maybe in maybes:
+            print(maybe)
+            x = maybe[0]
+            y = maybe[1]
+            if y > 0:
+                if depths[x][y-1] != 9:
+                    index = (x,y - 1)
+                    nextmaybes.append(index)
+                    basin.add(index)
+            if y < len(depths[0]) - 1:
+                if depths[x][y+1] != 9:
+                    index = (x,y+1)
+                    nextmaybes.append(index)
+                    basin.add(index)
+            if x > 0:
+                if depths[x-1][y] != 9:
+                    index = (x-1,y)
+                    nextmaybes.append(index)
+                    basin.add(index)
+            if x < len(depths) - 1:
+                if depths[x+1][y] != 9:
+                    index = (x+1,y)
+                    nextmaybes.append(index)
+                    basin.add(index)
+        nexts = [n for n in nextmaybes if n not in basin]
+        maybes = nexts
+    return basin
+
+
 
 def prep(cases):
     depths = []
