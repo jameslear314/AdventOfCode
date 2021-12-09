@@ -59,52 +59,48 @@ def solve2(cases):
     print(sizes)
     return sizes[-1] * sizes[-2] * sizes[-3]
 
+def adjacents(depths, index):
+    x = index[0]
+    y = index[1]
+
+    xm1 = x - 1
+    xp1 = x + 1
+    ym1 = y - 1
+    yp1 = y + 1
+
+    adjacent = []
+
+    if xm1 > - 1:
+        adjacent.append((xm1, y))
+    if ym1 > -1 :
+        adjacent.append((x, ym1))
+    if xp1 < len(depths):
+        adjacent.append((xp1, y))
+    if yp1 < len(depths[0]):
+        adjacent.append((x, yp1))
+    
+    return adjacent
+
 def mapBasin(depths, x, y):
     basin = set()
     start = (x,y)
     maybes = [start]
 
     while len(maybes):
-        nextmaybes = []
-        for maybe in maybes:
-            print("Maybe and its adjacents", maybe)
-            x = maybe[0]
-            y = maybe[1]
-            if x > 0:
-                adjacent = depths[x-1][y]
-                index = (x-1,y)
+        nexts = []
+        for index in maybes:
+            print("index and its adjacents", index)
 
-                print(adjacent, index)
-                if adjacent != 9:
-                    nextmaybes.append(index)
-                    basin.add(index)
-            if x < len(depths) - 1:
-                adjacent = depths[x+1][y]
-                index = (x+1,y)
-                print(adjacent, index)
-                if adjacent != 9:
-                    nextmaybes.append(index)
-                    basin.add(index)
-            if y > 0:
-                adjacent = depths[x][y-1]
-                index = (x,y - 1)
-                print(adjacent, index)
-                if adjacent != 9:
-                    nextmaybes.append(index)
-                    basin.add(index)
-            if y < len(depths[0]) - 1:
-                adjacent = depths[x][y+1]
-                index = (x,y+1)
-                print(adjacent, index)
-                if adjacent != 9:
-                    nextmaybes.append(index)
-                    basin.add(index)
-        nexts = [n for n in nextmaybes if n not in basin]
-        print(nextmaybes, nexts, basin)
+            adjacent = adjacents(depths, index)
+            for maybe in adjacent:
+                if maybe not in basin:
+                    x = maybe[0]
+                    y = maybe[1]
+                    if depths[x][y] != 9:
+                        nexts.append(maybe)
+                        basin.add(maybe)
         maybes = nexts
     return basin
-
-
 
 def prep(cases):
     depths = []
