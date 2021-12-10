@@ -3,6 +3,19 @@ TEST0 = 'test.10.0.txt'
 RESULT0 = 26397
 RESULT1 = 5
 
+equal = ['{}', '[]', '()', '<>']
+equalmap = {}
+for sign in equal:
+    equalmap[sign[0]] = sign[1]
+    equalmap[sign[1]] = sign[0]
+
+scorelookup = {
+    ')': 3,
+    ']': 57,
+    '}': 1197,
+    '>': 25137,
+}
+
 def loadData(filename):
     with open(filename, 'r') as inputFile:
         lines = inputFile.readlines()
@@ -10,7 +23,25 @@ def loadData(filename):
     return lines
 
 def solve(cases):
-    return None
+    total = 0
+    for case in cases:
+        badchar = None
+        proceed = True
+        stack = []
+        for char in case:
+            if proceed:
+                if char in '{([<':
+                    stack.append(char)
+                elif char in '})]>':
+                    if stack[-1] != equalmap[char]:
+                        proceed = False
+                        badchar = char
+                        
+                    else:
+                        stack = stack[:-1]
+        if badchar:
+            total += scorelookup[badchar]
+    return total
 
 def solve2(cases):
     return None
