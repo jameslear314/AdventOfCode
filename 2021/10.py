@@ -1,7 +1,7 @@
 INPUT = 'data.10.txt'
 TEST0 = 'test.10.0.txt'
 RESULT0 = 26397
-RESULT1 = 5
+RESULT1 = 288957
 
 equal = ['{}', '[]', '()', '<>']
 equalmap = {}
@@ -14,6 +14,13 @@ scorelookup = {
     ']': 57,
     '}': 1197,
     '>': 25137,
+}
+
+completelookup = {
+    '(': 1,
+    '[': 2,
+    '{': 3,
+    '<': 4,
 }
 
 def loadData(filename):
@@ -36,7 +43,6 @@ def solve(cases):
                     if stack[-1] != equalmap[char]:
                         proceed = False
                         badchar = char
-                        
                     else:
                         stack = stack[:-1]
         if badchar:
@@ -44,7 +50,30 @@ def solve(cases):
     return total
 
 def solve2(cases):
-    return None
+    scores = []
+    for case in cases:
+        score = 0
+        badchar = None
+        proceed = True
+        stack = []
+        for char in case:
+            if proceed:
+                if char in '{([<':
+                    stack.append(char)
+                elif char in '})]>':
+                    if stack[-1] != equalmap[char]:
+                        proceed = False
+                        badchar = char
+                    else:
+                        stack = stack[:-1]
+        if not badchar:
+            for i in range(len(stack)):
+                score *= 5
+                score += completelookup[stack[-i - 1]]
+        if score > 0:
+            scores.append(score)
+    scores.sort()
+    return scores[int(len(scores) / 2)]
 
 if __name__ == '__main__':
     data = loadData(INPUT)
