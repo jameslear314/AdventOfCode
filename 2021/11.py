@@ -5,32 +5,68 @@ RESULT1 = 5
 
 class Grid:
     field = []
+    flashed = []
+    rows = -1
+    columns = -1
 
     def __init__(self, values):
-        for row in range(len(values)):
+        rowlength = len(values)
+        self.rows = rowlength
+        columnlength = len(values[0])
+        self.columns = columnlength
+        for row in range(rowlength):
             self.field.append([])
-            for column in range(len(values[0])):
+            self.flashed.append([])
+            for column in range(columnlength):
                 self.field[row].append(column)
+                self.flashed[row].append(False)
 
-        for row in range(len(values)):
-            for column in range(len(values[0])):
+        for row in range(rowlength):
+            for column in range(columnlength):
                 self.field[row][column] = Octo(values[row][column], row, column, self)
 
-        for row in range(len(values)):
-            for column in range(len(values[0])):
+        for row in range(rowlength):
+            for column in range(columnlength):
                 Octo.link(self.field[row][column], row, column, self)
+        print(self.rows, self.columns)
+
+    def propagate(self, step=0):
+        flashcount = 0
+        # Add 1 to all octos; reset the flashing
+        for row in range(self.rows):
+            for column in range(self.columns):
+                octo = self.field[row][column]
+                octo.value += 1
+                octo.flashed = False
+
+        proceed = True
+        while proceed: # Flash all octopuses until they are done
+            flashstep = False
+            for row in range(self.rows):
+                for column in range(self.columns):
+                    if self.field[row][column].flash():
+                        flashstep = True
+                        flashcount += 1
+            if not flashstep: # When no more octopuses flash, break the loop
+                proceed = False
+
+        return flashcount
+
+    def __repr__(self) -> str:
+        for row in range(self.rows):
+            for column in range(self.columns):
+                print(self.field[row][column].value, end = '')
+            print()
 
 class Octo:
-    value = -1
-    row = -1
-    column = -1
-    neighbors = -1
+    value, row, column, neighbors, grid = None, None, None, None, None
 
     def __init__(self, value, row, column, grid):
         self.value = value
         self.row = row
         self.column = column
         self.neighbors = []
+        self.grid = grid
 
     def link(self, row, column, grid):
         rows = [row]
@@ -49,6 +85,15 @@ class Octo:
                 if r != row or c != column:
                     self.neighbors.append(grid.field[r][c])
 
+    def flash(self):
+        flashed = False
+        if not self.grid.flashed[self.row][self.column] and self.value > 9:
+            flashed = True
+            for neighbor in self.neighbors:
+                neighbor.value += 1
+            self.grid.flashed[self.row][self.column] = True
+        return flashed
+
 def loadData(filename):
     with open(filename, 'r') as inputFile:
         lines = inputFile.readlines()
@@ -58,6 +103,14 @@ def loadData(filename):
 def solve(cases):
     values = prep(cases)
     grid = Grid(values)
+
+    total = 0
+    for i in range(10):
+        total += grid.propagate(i)
+        print(i, total)
+        grid.__repr__()
+
+    return total
 
     # print(len(grid.field[2][3].neighbors))
     # neighbors = grid.field[0][0].neighbors
