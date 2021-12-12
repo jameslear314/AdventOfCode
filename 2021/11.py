@@ -1,7 +1,7 @@
 INPUT = 'data.11.txt'
 TEST0 = 'test.11.0.txt'
 RESULT0 = 1656
-RESULT1 = 5
+RESULT1 = 195
 
 tests = {
 0: '''5483143223
@@ -271,8 +271,22 @@ def solve(cases, testing=False):
     #     print(n.value)
 
 def solve2(cases):
-    grid = prep(cases)
-    return None
+    values = prep(cases)
+    grid = Grid(values)
+
+    i = 1
+    while True:
+        grid.propagate(i)
+        allFlash = True
+        for r in range(grid.rows):
+            for c in range(grid.columns):
+                if not grid.flashed[r][c]:
+                    allFlash = False
+                    break
+        grid.reset()
+        if allFlash:
+            return i
+        i += 1
 
 def prep(cases):
     grid = []
