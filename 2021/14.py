@@ -4,7 +4,7 @@ from typing import NewType
 INPUT = 'data.14.txt'
 TEST0 = 'test.14.0.txt'
 RESULT0 = 1588
-RESULT1 = 5
+RESULT1 = 2188189693529
 
 def loadData(filename):
     with open(filename, 'r') as inputFile:
@@ -37,8 +37,36 @@ def solve(cases, itercount):
     return max(values) - min(values)
 
 
-def solve2(cases):
-    return None
+def solve2(cases, itercount):
+    current, transforms = prep(cases)
+    counts = {}
+
+    for i in range(len(current) - 1):
+        print(i, counts)
+        expand(current[i:i+2], transforms, counts, itercount)
+
+    values = counts.values()
+    return max(values) - min(values)
+
+def expand(string, trans, counts, level):
+    if level == 0:
+        record(string[0], string[1], counts)
+    else:
+        key = ''.join(string)
+        if key not in trans:
+            record(string[0], string[1], counts)
+        else:
+            mid = trans[key]
+            expand([string[0], mid], trans, counts, level - 1)
+            expand([mid, string[1]], trans, counts, level - 1)
+
+def record(s1, s2, counts):
+    for char in (s1, s2):
+        if char not in counts:
+            counts[char] = 1
+        else:
+            counts[char] += 1
+
 
 def prep(cases):
     input = cases[0]
@@ -70,11 +98,11 @@ if __name__ == '__main__':
     results = solve(data, 10)
     print(results)
 
-    test_results = solve(test, 40)
+    test_results = solve2(test, 40)
 
     if test_results != RESULT1:
         print(test_results, 'should be {}'.format(RESULT1))
         exit()
 
-    results = solve(data, 40)
+    results = solve2(data, 40)
     print(results)
