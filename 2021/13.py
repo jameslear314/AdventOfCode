@@ -10,10 +10,39 @@ def loadData(filename):
     return lines
 
 def solve(cases):
-    return None
+    grid, folds = prepgrid(cases)
+    print(grid)
+    fold = folds[0]
+    if fold[0] == 'x': # This transformation is not necessary, except that I always invert grids
+        dimension = 'c'
+    else:
+        dimension = 'r'
+    
+    newgrid = []
+    if dimension == 'r':
+        for i in range(len(grid)):
+            
+
+
 
 def solve2(cases):
     return None
+
+def prepgrid(cases):
+    points, folds = prep(cases)
+    xs = [int(p[0]) for p in points]
+    ys = [int(p[1]) for p in points]
+
+    grid = []
+    for _ in range(max(xs) + 1):
+        row = []
+        for __ in range(max(ys) + 1):
+            row.append(0)
+        grid.append(row)
+
+    for point in points:
+        grid[int(point[0])][int(point[1])] = 1
+    return grid, folds
 
 def prep(cases):
     points = []
