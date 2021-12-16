@@ -91,6 +91,55 @@ class Path:
     def __repr__(self) -> str:
         return "{}: {}".format(self.endscore, self.positions[-1].dtogoal())
 
+class ScoreGrid:
+    field = None
+    grid = None
+    positive = None
+    negative = None
+
+    def __init__(self, grid):
+        self.field = []
+        self.grid = grid
+        for x in range(grid.x):
+            row = []
+            for y in range(grid.y):
+                row.append(None)
+            self.field.append(row)
+
+    def register(self, path):
+        end = path.positions[-1]
+        score = path.endscore
+        direction = 1 if path.direction else -1
+
+        dirscore = direction * score
+
+        existingscore = self.field[end.x][end.y]
+        registered = False
+        if existingscore is None:
+            self.field[end.x][end.y] = dirscore
+            registered = True
+        
+        elif direction == 1:
+            if existingscore > dirscore:
+                self.field[end.x][end.y] = dirscore
+                registered = True
+        else:
+            if existingscore < dirscore:
+                self.field[end.x][end.y] = dirscore
+                registered = True
+
+        if not registered:
+            return [] # Don't continue processing candidates if a cheaper path was here first
+
+        # This score is the cheapest known score.
+        # Send out candidates which are cheaper than their next spots
+        goodCandidates = []
+        for candidate in path.candidates:
+            x = candidate.x
+            y = candidate.y
+            nextscore = self.grid[x][y]
+            maybescore = dirscore + direction * nextscore
+
 class Grid:
     field = None
     x = None
