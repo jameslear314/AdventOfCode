@@ -25,7 +25,7 @@ def prep(cases):
         for char in case:
             row.append(int(char))
         grid.append(row)
-    return Grid(grid)
+    return grid
 
 if __name__ == '__main__':
     data = loadData(INPUT)
