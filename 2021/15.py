@@ -138,7 +138,11 @@ class ScoreGrid:
             x = candidate.x
             y = candidate.y
             nextscore = self.grid[x][y]
+            if nextscore == null:
+                goodCandidates.append(candidate)
+                continue
             maybescore = dirscore + direction * nextscore
+            if 
 
 class Grid:
     field = None
