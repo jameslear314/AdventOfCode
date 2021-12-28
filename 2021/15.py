@@ -99,7 +99,74 @@ def solve(cases):
 
 
 def solve2(cases):
-    return None
+    grid, scores, visited = prep(cases)
+    grid, scores, visited = expand(grid, scores, visited)
+    endx, endy = len(grid), len(grid[0])
+    scoreReached = 0
+
+    records = {}
+    x = 0
+    y = 0
+    start = Record(x, y, grid)
+    scores[x][y] = start.score
+    records[(x, y)] = start
+    visited[x][y] = True
+    currents = {}
+    for item in Record(1, 0, grid, start), Record(0, 1, grid, start):
+        score = item.score
+        x, y = item.x, item.y
+        if x == endx and y == endy: # When it stumbles on the end, stop travelling
+            return item.score
+        if visited[x][y]:
+            continue
+        if score not in currents:
+            currents[score] = []
+        currents[score].append(item)
+
+    loop = 0
+    while len(currents) > 0: # If the item is the end, it bails
+        loop += 1
+        nexts = {}
+        keys = list(currents.keys())
+        keys.sort()
+        for key in keys:
+            points = currents[key]
+            items = set()
+            for point in points:
+                x, y = point.x, point.y
+                if x == endx - 1 and y == endy - 1:
+                    return point.score
+
+                visit = visited[x][y]
+                if visit:
+                    continue
+                visited[x][y] = True
+
+                # Consider the adjacent points
+                potentials = []
+                if point.xlow:
+                    potentials.append(Record(x - 1, y, grid, point))
+                if point.ylow:
+                    potentials.append(Record(x, y - 1, grid, point))
+                if point.xhigh: 
+                    potentials.append(Record(x + 1, y, grid, point))
+                if point.yhigh:
+                    potentials.append(Record(x, y + 1, grid, point))
+                for potential in potentials:
+                    if not visited[potential.x][potential.y]:
+                        score = potential.score
+                        if score not in nexts:
+                            nexts[score] = []
+                        nexts[score].append(potential)
+
+        currents = nexts
+
+
+def expand(grid, scores, visited, multiplier=5):
+    nextgrid, nextscores, nextvisited = {}, {}, {}
+    return grid, scores, visited
+    # The grid becomes tiled, in which each copy to the right or below adds 1 to each score
+    # Each score is mod 9 of the 
 
 
 def prep(cases):
