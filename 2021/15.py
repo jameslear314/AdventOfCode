@@ -164,9 +164,10 @@ def solve2(cases):
 
 def expand(grid, scores, visited, multiplier=5):
     nextgrid, nextscores, nextvisited = {}, {}, {}
-    return grid, scores, visited
     # The grid becomes tiled, in which each copy to the right or below adds 1 to each score
-    # Each score is mod 9 of the 
+    # Each score is mod 9 of the score, I think.
+    xlen = len(grid) * 5
+    ylen = len(grid[0]) * 5
 
 
 def prep(cases):
