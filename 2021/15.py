@@ -166,9 +166,30 @@ def expand(grid, scores, visited, multiplier=5):
     nextgrid, nextscores, nextvisited = {}, {}, {}
     # The grid becomes tiled, in which each copy to the right or below adds 1 to each score
     # Each score is mod 9 of the score, I think.
-    xlen = len(grid) * 5
-    ylen = len(grid[0]) * 5
+    xlenorig = len(grid)
+    ylenorig = len(grid[0])
+    xlen = xlenorig * 5
+    ylen = ylenorig * 5
 
+    for x in range(xlen):
+        row = {}
+        for y in range(ylen):
+            row[y] = 0
+        nextgrid[x] = row
+    
+    # Populate the grid
+    for i in range(5):
+        for j in range(5):
+            # Populate the cell with the increased values
+            for x in range(xlenorig):
+                for y in range(ylenorig):
+                    value = (i + j + grid[x][y]) % 10
+                    nextgrid[i * xlenorig + x][j * ylenorig + y] = value
+    
+    for x in range(xlen):
+        print()
+        for y in range(ylen):
+            print(nextgrid[x][y], end="")
 
 def prep(cases):
     grid, scores, visited = {}, {}, {}
