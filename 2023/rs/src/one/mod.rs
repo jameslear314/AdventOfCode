@@ -11,6 +11,6 @@ pub fn a() {
     }
 }
 
-fn calibrate(input: &str) -> i32 {
+fn calibrate(_input: &str) -> i32 {
     return -1
 }
