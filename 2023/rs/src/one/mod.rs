@@ -1,13 +1,13 @@
-const a_exmpl: &str = "1abc2
+const A_EXMPL: &str = "1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet";
-const a_rslt: i32 = 142;
+const A_RSLT: i32 = 142;
 
 pub fn a() {
-    let check = calibrate(a_exmpl);
-    if check != a_rslt {
-        println!("Found inappropriate calculation; expected {} to equal {}", check, a_rslt);
+    let check = calibrate(A_EXMPL);
+    if check != A_RSLT {
+        println!("Found inappropriate calculation; expected {} to equal {}", check, A_RSLT);
     }
 }
 
