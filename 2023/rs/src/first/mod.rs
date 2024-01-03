@@ -81,12 +81,14 @@ pub fn b() {
     let example = read_file(&(prefix.to_owned() + EXMPL_SFX));
     let mut cont = true;
     let mut val: i32 = -1;
+    let mut contents: String = "".to_string();
     match example {
-        Ok(amendment) => {val = demend(digitify(&amendment)); if val != B_RSLT {cont = false; }},
+        Ok(amendment) => {contents = amendment.clone(); val = demend(digitify(&amendment)); if val != B_RSLT {cont = false; }},
         Err(e) => {eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + EXMPL_SFX), e); cont = false},
     };
     if !cont {
         println!("invalid in {:?};\n\texpected {} but calculated {}", start.elapsed(), B_RSLT, val);
+        println!("Had\n{}\nbut expected\n{}", contents, digitify(&contents));
         return;
     }
     println!("valid in {:?}\nCalibrating input...", start.elapsed());
@@ -101,7 +103,17 @@ pub fn b() {
 fn digitify(superstring: &str) -> String {
     let mut result = superstring.to_ascii_lowercase();
     for (word, digit) in NUMBER_MAP.iter() {
-        result = result.replace(word, &digit.to_string());
+        loop {
+            let option = result.find(word);
+
+            if Option::is_some(&option) {
+                let word_index = Option::unwrap(option);
+                // Break word instances by inserting their value as the second digit
+                result.insert(word_index + 1, *digit)
+            } else {
+                break;
+            }
+        };
     }
     result
 }
