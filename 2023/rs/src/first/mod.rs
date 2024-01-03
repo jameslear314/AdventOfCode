@@ -1,6 +1,4 @@
-use std::fs::File;
-use std::io::Read;
-use std::io::Error;
+use crate::util;
 use std::time::Instant;
 use std::collections::HashMap;
 
@@ -29,7 +27,7 @@ pub fn a() {
     let prefix = &(DIR.to_owned() + "a");
 
     let start = Instant::now();
-    let example = read_file(&(prefix.to_owned() + EXMPL_SFX));
+    let example = util::read_file(&(prefix.to_owned() + EXMPL_SFX));
     let mut cont = true;
     let mut val: i32 = -1;
     match example {
@@ -42,19 +40,11 @@ pub fn a() {
     }
     println!("valid in {:?}\nCalibrating input...", start.elapsed());
     
-    let input = read_file(&(prefix.to_owned() + INPUT_SFX));
+    let input = util::read_file(&(prefix.to_owned() + INPUT_SFX));
     match input {
         Ok(amendment) => println!("Found:\n\t{}\n\t\tafter {:?}\n", demend(amendment), start.elapsed()),
         Err(e) => eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + INPUT_SFX), e),
     }
-}
-
-fn read_file(path: &str) -> Result<String, Error> {
-    let mut file = File::open(path)?;
-    let mut contents = String::new();
-
-    file.read_to_string(&mut contents)?;
-    Ok(contents)
 }
 
 fn demend(amendment: String) -> i32 {
@@ -78,7 +68,7 @@ pub fn b() {
     let prefix = &(DIR.to_owned() + "b");
 
     let start = Instant::now();
-    let example = read_file(&(prefix.to_owned() + EXMPL_SFX));
+    let example = util::read_file(&(prefix.to_owned() + EXMPL_SFX));
     let mut cont = true;
     let mut val: i32 = -1;
     let mut contents: String = "".to_string();
@@ -93,7 +83,7 @@ pub fn b() {
     }
     println!("valid in {:?}\nCalibrating input...", start.elapsed());
     
-    let input = read_file(&(prefix.to_owned() + INPUT_SFX));
+    let input = util::read_file(&(prefix.to_owned() + INPUT_SFX));
     match input {
         Ok(amendment) => println!("Found:\n\t{}\n\t\tafter {:?}\n", demend(digitify(&amendment)), start.elapsed()),
         Err(e) => eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + INPUT_SFX), e),
