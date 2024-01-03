@@ -1,6 +1,6 @@
-mod one;
+mod first;
 
 fn main() {
     println!("Hello, advent!");
-    one::a();
+    first::a();
 }
