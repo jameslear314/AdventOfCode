@@ -2,31 +2,51 @@ use std::fs::File;
 use std::io::Read;
 use std::io::Error;
 use std::time::Instant;
+use std::collections::HashMap;
 
-const A_DIR: &str = "/source/self/AdventOfCode/2023/rs/src/first/";
-const A_EXMPL_PTH: &str = "a.example.txt";
-const A_PTH: &str = "a.txt";
+lazy_static! {static ref NUMBER_MAP: HashMap<&'static str, char> = {
+    let mut map = HashMap::new();
+    // map.insert("zero", '0'); // Zero is not a valid number in this problem
+    map.insert("one", '1');
+    map.insert("two", '2');
+    map.insert("three", '3');
+    map.insert("four", '4');
+    map.insert("five", '5');
+    map.insert("six", '6');
+    map.insert("seven", '7');
+    map.insert("eight", '8');
+    map.insert("nine", '9');
+    map
+};}
+const DIR: &str = "/source/self/AdventOfCode/2023/rs/src/first/";
+const EXMPL_SFX: &str = ".example.txt";
+const INPUT_SFX: &str = ".txt";
 const A_RSLT: i32 = 142;
+const B_RSLT: i32 = 281;
 
 pub fn a() {
-    print!("Checking validity of example a1... ");
-    let start = Instant::now();
-    match calibrate(&(A_DIR.to_owned() + A_EXMPL_PTH)){
-        Ok(check) => if check != A_RSLT {
-            println!("Found inappropriate calculation; expected {} to equal {}", check, A_RSLT);
-        },
-        Err(e) => eprintln!("Error reading file at {}: {}", A_EXMPL_PTH, e),
-    }
-    print!("valid in {:?}\nCalibrating input... ", start.elapsed());
-    match calibrate(&(A_DIR.to_owned() + A_PTH)){
-        Ok(val) => println!(":\n\t{}\n\t\tafter {:?}\n", val, start.elapsed()),
-        Err(e) => eprintln!("Error reading file at {}: {}", A_EXMPL_PTH, e),
-    }
-}
+    print!("Checking validity of example a1's calibration... ");
+    let prefix = &(DIR.to_owned() + "a");
 
-fn calibrate(input: &str) -> Result<i32, Error> {
-    let amendment = read_file(input)?;
-    return Ok(demend(amendment))
+    let start = Instant::now();
+    let example = read_file(&(prefix.to_owned() + EXMPL_SFX));
+    let mut cont = true;
+    let mut val: i32 = -1;
+    match example {
+        Ok(amendment) => {val = demend(amendment); if val != A_RSLT {cont = false; }},
+        Err(e) => {eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + EXMPL_SFX), e); cont = false},
+    };
+    if !cont {
+        println!("invalid in {:?};\n\texpected {} but calculated {}", start.elapsed(), A_RSLT, val);
+        return;
+    }
+    println!("valid in {:?}\nCalibrating input...", start.elapsed());
+    
+    let input = read_file(&(prefix.to_owned() + INPUT_SFX));
+    match input {
+        Ok(amendment) => println!("Found:\n\t{}\n\t\tafter {:?}\n", demend(amendment), start.elapsed()),
+        Err(e) => eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + INPUT_SFX), e),
+    }
 }
 
 fn read_file(path: &str) -> Result<String, Error> {
@@ -51,4 +71,37 @@ fn demend(amendment: String) -> i32 {
             
             }
         }).sum::<i32>()
+}
+
+pub fn b() {
+    print!("Checking validity of example a1's calibration... ");
+    let prefix = &(DIR.to_owned() + "b");
+
+    let start = Instant::now();
+    let example = read_file(&(prefix.to_owned() + EXMPL_SFX));
+    let mut cont = true;
+    let mut val: i32 = -1;
+    match example {
+        Ok(amendment) => {val = demend(digitify(&amendment)); if val != B_RSLT {cont = false; }},
+        Err(e) => {eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + EXMPL_SFX), e); cont = false},
+    };
+    if !cont {
+        println!("invalid in {:?};\n\texpected {} but calculated {}", start.elapsed(), B_RSLT, val);
+        return;
+    }
+    println!("valid in {:?}\nCalibrating input...", start.elapsed());
+    
+    let input = read_file(&(prefix.to_owned() + INPUT_SFX));
+    match input {
+        Ok(amendment) => println!("Found:\n\t{}\n\t\tafter {:?}\n", demend(digitify(&amendment)), start.elapsed()),
+        Err(e) => eprintln!("Error reading file at {}: {}", &(prefix.to_owned() + INPUT_SFX), e),
+    }
+}
+
+fn digitify(superstring: &str) -> String {
+    let mut result = superstring.to_ascii_lowercase();
+    for (word, digit) in NUMBER_MAP.iter() {
+        result = result.replace(word, &digit.to_string());
+    }
+    result
 }
